@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Player | Code With Jenish</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <link rel="stylesheet" href="lesson-player.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="dashboard.html" class="logo">
+        <div class="logo-icon">
+            <i class="fa-solid fa-code"></i>
+        </div>
+        <span>Code With Jenish</span>
+    </a>
+
+    <div class="nav-links">
+        <a href="dashboard.html">
+            <i class="fa-solid fa-house"></i> Dashboard
+        </a>
+
+        <a href="courses.html" class="active">
+            <i class="fa-solid fa-book"></i> Courses
+        </a>
+
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+    </div>
+
+    <div class="user-area">
+        <span class="user-name" id="userName">Student</span>
+
+        <button class="logout-btn" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+    </div>
+</nav>
+
+
+<main class="page">
+
+    <div class="back-btn" onclick="goBack()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Course
+    </div>
+
+    <div class="layout">
+
+        <!-- LEFT -->
+        <section class="player-section">
+
+            <div class="video-box" id="videoContainer">
+                <div class="video-placeholder">
+                    <i class="fa-solid fa-play"></i>
+                    <p>Loading lesson...</p>
+                </div>
+            </div>
+
+            <div class="lesson-info">
+
+                <div class="lesson-meta">
+                    <span class="badge" id="courseBadge">
+                        Course
+                    </span>
+
+                    <span class="badge" id="durationBadge">
+                        <i class="fa-regular fa-clock"></i>
+                        0 min
+                    </span>
+
+                    <span class="badge" id="lessonNumberBadge">
+                        Lesson 1
+                    </span>
+                </div>
+
+                <h1 id="lessonTitle">
+                    Loading lesson...
+                </h1>
+
+                <p class="description" id="lessonDescription">
+                    Please wait while the lesson is loading.
+                </p>
+
+                <div class="action-row">
+
+                    <button
+                        class="btn secondary"
+                        id="previousBtn"
+                        onclick="previousLesson()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Previous
+                    </button>
+
+                    <button
+                        class="btn primary"
+                        id="completeBtn"
+                        onclick="completeLesson()">
+                        <i class="fa-solid fa-check"></i>
+                        Mark as Complete
+                    </button>
+
+                    <button
+                        class="btn secondary"
+                        id="nextBtn"
+                        onclick="nextLesson()">
+                        Next
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="side-card">
+
+                <div class="side-header">
+                    <h2 id="sidebarCourse">
+                        Course Lessons
+                    </h2>
+
+                    <p id="lessonCountText">
+                        0 lessons
+                    </p>
+                </div>
+
+                <div class="progress-area">
+
+                    <div class="progress-top">
+                        <span>Your Progress</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div
+                            class="progress-fill"
+                            id="progressFill">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div
+                    class="lesson-list"
+                    id="lessonList">
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+<div class="toast" id="toast"></div>
+
+
+
+<script src="lesson-player.js"></script>
+</body>
+</html>

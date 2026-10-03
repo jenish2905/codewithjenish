@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Course Details | Code With Jenish</title>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+<link rel="stylesheet" href="course-details.css">
+
+
+</head>
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar">
+
+    <a href="dashboard.html" class="logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-code"></i>
+        </div>
+
+        Code With <span>Jenish</span>
+
+    </a>
+
+
+    <div class="nav-links">
+
+        <a href="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="courses.html" class="active">
+            <i class="fa-solid fa-book"></i>
+            Courses
+        </a>
+
+        <a href="dashboard.html">
+            <i class="fa-solid fa-chart-line"></i>
+            Progress
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-certificate"></i>
+            Certificates
+        </a>
+
+    </div>
+
+
+    <div class="user-box">
+
+        <div class="avatar" id="avatar">
+            U
+        </div>
+
+        <div>
+
+            <div class="user-name" id="userName">
+                Student
+            </div>
+
+            <div class="user-role">
+                Student
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================
+     COURSE AREA
+========================= -->
+
+<main class="container" id="courseArea">
+
+    <div class="breadcrumb">
+
+        <a href="courses.html">
+            Courses
+        </a>
+
+        <i class="fa-solid fa-angle-right"></i>
+
+        <span id="breadcrumbCourse">
+            Course
+        </span>
+
+    </div>
+
+
+    <!-- COURSE HERO -->
+
+    <section class="course-hero">
+
+        <div class="hero-content">
+
+            <span
+                class="category"
+                id="courseCategory"
+            >
+                Programming
+            </span>
+
+
+            <h1 id="courseName">
+                Course Name
+            </h1>
+
+
+            <p id="courseDescription">
+                Course description.
+            </p>
+
+
+            <div class="course-meta">
+
+                <div class="meta-item">
+                    <i class="fa-solid fa-book"></i>
+                    <span id="lessonCount">
+                        0 Lessons
+                    </span>
+                </div>
+
+                <div class="meta-item">
+                    <i class="fa-solid fa-users"></i>
+                    <span id="studentCount">
+                        0 Students
+                    </span>
+                </div>
+
+                <div class="meta-item">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>
+                        Self-paced
+                    </span>
+                </div>
+
+                <div class="meta-item">
+                    <i class="fa-solid fa-signal"></i>
+                    <span>
+                        Beginner
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="instructor">
+
+                <div class="instructor-avatar">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+
+                <div>
+                    <strong>
+                        Code With Jenish
+                    </strong>
+
+                    <span>
+                        Course Instructor
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ENROLL CARD -->
+
+        <div class="enroll-card">
+
+            <div
+                class="course-preview"
+                id="courseIcon"
+            >
+                💻
+            </div>
+
+
+            <div
+                class="price"
+                id="coursePrice"
+            >
+                ₹499
+            </div>
+
+
+            <button
+                class="enroll-btn"
+                id="enrollButton"
+                onclick="enrollCourse()"
+            >
+                <i class="fa-solid fa-graduation-cap"></i>
+                Enroll Now
+            </button>
+
+
+            <div class="course-includes">
+
+                <h3>
+                    This course includes
+                </h3>
+
+
+                <div class="include">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Video lessons
+                </div>
+
+                <div class="include">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Practical examples
+                </div>
+
+                <div class="include">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Quizzes
+                </div>
+
+                <div class="include">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Progress tracking
+                </div>
+
+                <div class="include">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Certificate on completion
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTENT -->
+
+    <section class="content-grid">
+
+        <div>
+
+            <!-- WHAT YOU LEARN -->
+
+            <div class="content-card">
+
+                <h2>
+                    What You'll Learn
+                </h2>
+
+                <div class="learn-list">
+
+                    <div class="learn-item">
+                        <i class="fa-solid fa-check"></i>
+                        <span>
+                            Understand programming fundamentals
+                        </span>
+                    </div>
+
+                    <div class="learn-item">
+                        <i class="fa-solid fa-check"></i>
+                        <span>
+                            Write clean and structured code
+                        </span>
+                    </div>
+
+                    <div class="learn-item">
+                        <i class="fa-solid fa-check"></i>
+                        <span>
+                            Solve programming problems
+                        </span>
+                    </div>
+
+                    <div class="learn-item">
+                        <i class="fa-solid fa-check"></i>
+                        <span>
+                            Build practical projects
+                        </span>
+                    </div>
+
+                    <div class="learn-item">
+                        <i class="fa-solid fa-check"></i>
+                        <span>
+                            Improve problem-solving skills
+                        </span>
+                    </div>
+
+                    <div class="learn-item">
+                        <i class="fa-solid fa-check"></i>
+                        <span>
+                            Prepare for technical interviews
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LESSONS -->
+
+            <div
+                class="content-card"
+                style="margin-top:20px;"
+            >
+
+                <h2>
+                    Course Lessons
+                </h2>
+
+                <div id="lessonList"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div>
+
+            <div class="content-card">
+
+                <h2>
+                    Course Statistics
+                </h2>
+
+
+                <div class="stats-box">
+
+                    <div class="stat">
+
+                        <strong id="statLessons">
+                            0
+                        </strong>
+
+                        <span>
+                            Lessons
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong id="statStudents">
+                            0
+                        </strong>
+
+                        <span>
+                            Students
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong>
+                            100%
+                        </strong>
+
+                        <span>
+                            Online
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong>
+                            24/7
+                        </strong>
+
+                        <span>
+                            Access
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- NOT FOUND -->
+
+<section
+    class="not-found"
+    id="notFound"
+>
+
+    <div>
+
+        <i class="fa-solid fa-book-open"></i>
+
+        <h2>
+            Course Not Found
+        </h2>
+
+        <p>
+            The requested course does not exist.
+        </p>
+
+        <a
+            href="courses.html"
+            class="back-btn"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Courses
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast"
+>
+
+    <i class="fa-solid fa-circle-check"></i>
+
+    <span id="toastMessage">
+        Success
+    </span>
+
+</div>
+
+
+
+
+
+<script src="course-details.js"></script>
+</body>
+</html>
