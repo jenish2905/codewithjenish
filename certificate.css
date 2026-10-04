@@ -1,0 +1,342 @@
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #050816;
+      color: white;
+    }
+
+    :root {
+      --cyan: #00ffff;
+      --muted: #aab4c8;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 18px 6%;
+      border-bottom: 1px solid rgba(0,255,255,.18);
+      background: #080d20;
+    }
+
+    .logo {
+      color: var(--cyan);
+      font-size: 21px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #dce4f4;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: var(--cyan);
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 35px auto 60px;
+    }
+
+    .page-heading {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .page-heading h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .page-heading h1 span {
+      color: var(--cyan);
+    }
+
+    .page-heading p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    select, button {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+
+    select {
+      background: #10182d;
+      color: white;
+      border: 1px solid rgba(0,255,255,.35);
+      min-width: 230px;
+    }
+
+    button {
+      cursor: pointer;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      background: transparent;
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    button:hover {
+      background: var(--cyan);
+      color: #050816;
+    }
+
+    button:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    .certificate {
+      position: relative;
+      width: 100%;
+      min-height: 590px;
+      padding: 45px;
+      background: #fff;
+      color: #17233c;
+      border: 12px solid #d5b66c;
+      outline: 2px solid #9b782e;
+      outline-offset: -22px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .certificate::before,
+    .certificate::after {
+      content: "✦";
+      position: absolute;
+      color: #d5b66c;
+      font-size: 35px;
+    }
+
+    .certificate::before {
+      top: 25px;
+      left: 30px;
+    }
+
+    .certificate::after {
+      right: 30px;
+      bottom: 25px;
+    }
+
+    .certificate-brand {
+      color: #176b80;
+      font-weight: 800;
+      font-size: 23px;
+      letter-spacing: 1px;
+      margin-bottom: 35px;
+    }
+
+    .certificate-label {
+      color: #9b782e;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      margin-bottom: 12px;
+    }
+
+    .certificate h2 {
+      font-family: Georgia, serif;
+      font-size: clamp(32px, 5vw, 48px);
+      color: #142b4e;
+      margin-bottom: 25px;
+    }
+
+    .cert-intro {
+      font-family: Georgia, serif;
+      font-size: 17px;
+      color: #526079;
+      margin-bottom: 14px;
+    }
+
+    .student-name {
+      font-family: Georgia, serif;
+      font-size: clamp(27px, 4vw, 38px);
+      font-weight: 700;
+      color: #176b80;
+      border-bottom: 1px solid #c6a34c;
+      padding: 0 25px 10px;
+      margin-bottom: 20px;
+      overflow-wrap: anywhere;
+    }
+
+    .cert-description {
+      max-width: 650px;
+      color: #526079;
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .course-name {
+      font-family: Georgia, serif;
+      font-size: 24px;
+      color: #142b4e;
+      font-weight: 700;
+      margin-bottom: 28px;
+      overflow-wrap: anywhere;
+    }
+
+    .certificate-bottom {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      gap: 25px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    .cert-meta {
+      min-width: 170px;
+      text-align: center;
+    }
+
+    .cert-meta strong {
+      display: block;
+      border-top: 1px solid #9b782e;
+      padding-top: 10px;
+      color: #142b4e;
+      font-size: 14px;
+    }
+
+    .cert-meta span {
+      display: block;
+      color: #68758c;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .seal {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border: 3px double #c5a24e;
+      border-radius: 50%;
+      color: #a27d29;
+      font-size: 11px;
+      font-weight: 800;
+      transform: rotate(-12deg);
+      line-height: 1.3;
+    }
+
+    .message {
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(0,255,255,.25);
+      border-radius: 12px;
+      padding: 30px 20px;
+      line-height: 1.8;
+      margin-top: 20px;
+    }
+
+    .message a {
+      color: var(--cyan);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      border-top: 1px solid rgba(0,255,255,.18);
+      text-align: center;
+      color: var(--muted);
+      padding: 22px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      nav {
+        gap: 12px;
+      }
+
+      .certificate {
+        padding: 45px 25px;
+        min-height: 620px;
+        border-width: 8px;
+      }
+
+      .certificate-bottom {
+        gap: 18px;
+      }
+
+      .certificate-brand {
+        font-size: 18px;
+      }
+
+      .certificate-label {
+        letter-spacing: 3px;
+      }
+    }
+
+    @media print {
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+
+      body {
+        background: white;
+      }
+
+      header,
+      .page-heading,
+      .controls,
+      .message,
+      footer {
+        display: none !important;
+      }
+
+      .container {
+        width: 100%;
+        margin: 0;
+      }
+
+      .certificate {
+        display: flex !important;
+        width: 100%;
+        height: 100vh;
+        min-height: 0;
+        border-width: 12px;
+        outline-offset: -22px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }

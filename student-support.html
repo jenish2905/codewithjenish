@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Support | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: white;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+    }
+    main { width: 92%; max-width: 850px; margin: 35px auto; }
+    .panel {
+      padding: 22px;
+      margin-bottom: 24px;
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+    }
+    h1, h2 { color: #00ffff; }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 16px;
+      background: #080d1d;
+      border: 1px solid #00ffff55;
+      color: white;
+      border-radius: 8px;
+    }
+    button, a {
+      display: inline-block;
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .ticket {
+      background: #080d1d;
+      border: 1px solid #ffffff22;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 12px 0;
+    }
+    .muted { color: #aab5cb; }
+    .status { color: #00ffff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish — Student Support</h2>
+    <a href="dashboard.html">Dashboard</a>
+  </header>
+
+  <main>
+    <h1>Contact Support</h1>
+    <p class="muted">Ask a question or report a problem.</p>
+
+    <section class="panel">
+      <h2>Submit a Request</h2>
+      <form id="supportForm">
+        <label for="subject">Subject</label>
+        <input id="subject" required maxlength="100"
+          placeholder="e.g. Unable to play a video">
+
+        <label for="category">Category</label>
+        <select id="category" required>
+          <option value="Course">Course issue</option>
+          <option value="Payment">Payment issue</option>
+          <option value="Account">Account issue</option>
+          <option value="Technical">Technical issue</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" required maxlength="2000"
+          placeholder="Describe your issue..."></textarea>
+
+        <button type="submit">Send Request</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>My Requests</h2>
+      <div id="ticketList"></div>
+    </section>
+  </main>
+
+  <script>
+    const user = JSON.parse(
+      localStorage.getItem("loggedInUser") || "null"
+    );
+
+    if (!user) location.href = "login.html";
+
+    const readTickets = () =>
+      JSON.parse(localStorage.getItem("supportTickets") || "[]");
+
+    const saveTickets = tickets =>
+      localStorage.setItem("supportTickets", JSON.stringify(tickets));
+
+    const form = document.getElementById("supportForm");
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const tickets = readTickets();
+
+      tickets.unshift({
+        id: Date.now().toString(),
+        userName: user.name || user.email,
+        userEmail: user.email.toLowerCase(),
+        subject: document.getElementById("subject").value.trim(),
+        category: document.getElementById("category").value,
+        message: document.getElementById("message").value.trim(),
+        status: "Open",
+        adminReply: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+
+      saveTickets(tickets);
+      form.reset();
+      renderTickets();
+      alert("Your support request has been submitted.");
+    });
+
+    function renderTickets() {
+      const list = document.getElementById("ticketList");
+      list.innerHTML = "";
+
+      const tickets = readTickets().filter(ticket =>
+        ticket.userEmail === user.email.toLowerCase()
+      );
+
+      if (!tickets.length) {
+        list.textContent = "You have not submitted any requests.";
+        return;
+      }
+
+      tickets.forEach(ticket => {
+        const card = document.createElement("div");
+        card.className = "ticket";
+
+        const title = document.createElement("h3");
+        title.textContent = ticket.subject;
+
+        const category = document.createElement("p");
+        category.className = "muted";
+        category.textContent = ticket.category;
+
+        const message = document.createElement("p");
+        message.textContent = ticket.message;
+
+        const status = document.createElement("p");
+        status.className = "status";
+        status.textContent = "Status: " + ticket.status;
+
+        const date = document.createElement("p");
+        date.className = "muted";
+        date.textContent = new Date(ticket.createdAt).toLocaleString();
+
+        card.append(title, category, message, status, date);
+
+        if (ticket.adminReply) {
+          const reply = document.createElement("p");
+          reply.textContent = "Admin reply: " + ticket.adminReply;
+          card.appendChild(reply);
+        }
+
+        list.appendChild(card);
+      });
+    }
+
+    renderTickets();
+  </script>
+</body>
+</html>
+

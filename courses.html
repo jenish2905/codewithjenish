@@ -1,214 +1,43 @@
+<!-- courses.html -->
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Courses | Code With Jenish</title>
-
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
->
-
-
-<link rel="stylesheet" href="courses.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses | Code With Jenish</title>
+  <link rel="stylesheet" href="courses.css">
 </head>
-
 <body>
+<header>
+  <a class="logo" href="dashboard.html">Code With Jenish</a>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="courses.html" class="active">Courses</a>
+    <a href="my-progress.html">My Progress</a>
+    <a href="student-results.html">Quiz Results</a>
+    <a href="student-profile.html">Profile</a>
+  </nav>
+</header>
 
-<!-- =========================
-     NAVBAR
-========================= -->
+<main class="container">
+  <section class="hero">
+    <h1>Explore Our <span>Courses</span></h1>
+    <p>Choose a course and start building your skills.</p>
+  </section>
 
-<nav class="navbar">
-
-    <a href="dashboard.html" class="logo">
-
-        <div class="logo-icon">
-            <i class="fa-solid fa-code"></i>
-        </div>
-
-        Code With <span>Jenish</span>
-
-    </a>
-
-
-    <div class="nav-links">
-
-        <a href="dashboard.html">
-            <i class="fa-solid fa-house"></i>
-            Home
-        </a>
-
-        <a href="courses.html" class="active">
-            <i class="fa-solid fa-book"></i>
-            Courses
-        </a>
-
-        <a href="dashboard.html">
-            <i class="fa-solid fa-chart-line"></i>
-            Progress
-        </a>
-
-        <a href="#">
-            <i class="fa-solid fa-certificate"></i>
-            Certificates
-        </a>
-
-    </div>
-
-
-    <div class="user-box">
-
-        <div class="avatar" id="avatar">
-            U
-        </div>
-
-        <div>
-            <div class="user-name" id="userName">
-                Student
-            </div>
-
-            <div class="user-role">
-                Student
-            </div>
-        </div>
-
-    </div>
-
-
-    <button
-        class="mobile-menu"
-        onclick="toggleMobileMenu()"
-    >
-        <i class="fa-solid fa-bars"></i>
-    </button>
-
-</nav>
-
-
-<!-- =========================
-     HERO
-========================= -->
-
-<section class="hero">
-
-    <div class="hero-badge">
-        <i class="fa-solid fa-graduation-cap"></i>
-        LEARN • BUILD • GROW
-    </div>
-
-    <h1>
-        Explore Our
-        <span>Courses</span>
-    </h1>
-
-    <p>
-        Learn programming, web development, databases,
-        Python, JavaScript, AI and more with practical
-        courses designed for students.
-    </p>
-
-</section>
-
-
-<!-- =========================
-     SEARCH + FILTER
-========================= -->
-
-<div class="tools">
-
-    <div class="search-box">
-
-        <i class="fa-solid fa-magnifying-glass"></i>
-
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search courses..."
-            oninput="renderCourses()"
-        >
-
-    </div>
-
-
-    <select
-        id="categoryFilter"
-        class="filter"
-        onchange="renderCourses()"
-    >
-
-        <option value="all">
-            All Categories
-        </option>
-
-        <option value="Programming">
-            Programming
-        </option>
-
-        <option value="Web Development">
-            Web Development
-        </option>
-
-        <option value="Database">
-            Database
-        </option>
-
-        <option value="AI">
-            Artificial Intelligence
-        </option>
-
+  <section class="filters">
+    <input id="search" type="search" placeholder="Search courses..." aria-label="Search courses">
+    <select id="categoryFilter" aria-label="Filter by category">
+      <option value="all">All categories</option>
     </select>
+  </section>
 
-</div>
+  <section class="course-grid" id="courseGrid"></section>
+</main>
 
-
-<!-- =========================
-     COURSES
-========================= -->
-
-<section class="course-container">
-
-    <div
-        class="course-grid"
-        id="courseGrid"
-    ></div>
-
-
-    <div
-        class="empty"
-        id="emptyState"
-    >
-
-        <i class="fa-solid fa-book-open"></i>
-
-        <h3>No Courses Found</h3>
-
-        <p>
-            Try another search or category.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     FOOTER
-========================= -->
-
-<footer>
-
-    © 2026
-    <span>Code With Jenish</span>.
-    All Rights Reserved.
-
-</footer>
-
-
+<footer>© 2026 Code With Jenish. All Rights Reserved.</footer>
 
 <script src="courses.js"></script>
 </body>
 </html>
+

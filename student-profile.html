@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Code With Jenish</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+   
+    <link rel="stylesheet" href="student-profile.css">
+</head>
+
+<body>
+
+<nav>
+    <a href="dashboard.html" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-code"></i></div>
+        <span>Code With Jenish</span>
+    </a>
+
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="courses.html"><i class="fa-solid fa-book"></i> Courses</a>
+        <a href="student-results.html"><i class="fa-solid fa-chart-line"></i> Results</a>
+        <a href="student-profile.html" class="active"><i class="fa-solid fa-user"></i> Profile</a>
+    </div>
+
+    <button class="logout" onclick="logout()" title="Logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+</nav>
+
+<main class="container">
+
+    <header class="heading">
+        <h1>My Profile 👤</h1>
+        <p>Manage your account details and track your learning journey.</p>
+    </header>
+
+    <div class="profile-layout">
+
+        <!-- LEFT PROFILE CARD -->
+        <aside class="card profile-card">
+
+            <div class="avatar" id="avatar">
+                J
+            </div>
+
+            <h2 id="profileName">Student</h2>
+            <p class="email" id="profileEmail">student@example.com</p>
+
+            <span class="member-badge">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Student Account
+            </span>
+
+            <div class="profile-divider"></div>
+
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <span>Enrolled Courses</span>
+                    <strong id="quickCourses">0</strong>
+                </div>
+
+                <div class="quick-stat">
+                    <span>Completed Lessons</span>
+                    <strong id="quickLessons">0</strong>
+                </div>
+
+                <div class="quick-stat">
+                    <span>Quiz Attempts</span>
+                    <strong id="quickQuizzes">0</strong>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- RIGHT CONTENT -->
+        <section class="main-content">
+
+            <!-- PERSONAL INFORMATION -->
+            <section class="card">
+
+                <div class="card-heading">
+                    <h2>Personal Information</h2>
+
+                    <button class="edit-btn" id="editBtn" onclick="enableEdit()">
+                        <i class="fa-solid fa-pen"></i> Edit Profile
+                    </button>
+                </div>
+
+                <form id="profileForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input id="name" type="text" required maxlength="80" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input id="email" type="email" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input id="phone" type="tel" maxlength="20" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input id="city" type="text" maxlength="80" disabled>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions hidden" id="formActions">
+                        <button type="button" class="btn secondary" onclick="cancelEdit()">
+                            Cancel
+                        </button>
+
+                        <button type="submit" class="btn primary">
+                            Save Changes
+                        </button>
+                    </div>
+
+                </form>
+
+            </section>
+
+            <!-- LEARNING STATISTICS -->
+            <section class="card">
+
+                <div class="card-heading">
+                    <h2>Learning Statistics</h2>
+                </div>
+
+                <div class="learning-stats">
+
+                    <div class="learning-stat">
+                        <i class="fa-solid fa-book-open"></i>
+                        <strong id="totalCourses">0</strong>
+                        <span>Enrolled Courses</span>
+                    </div>
+
+                    <div class="learning-stat">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <strong id="totalLessons">0</strong>
+                        <span>Completed Lessons</span>
+                    </div>
+
+                    <div class="learning-stat">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <strong id="averageQuiz">0%</strong>
+                        <span>Average Quiz Score</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ENROLLED COURSES -->
+            <section class="card">
+
+                <div class="card-heading">
+                    <h2>My Enrolled Courses</h2>
+                    <a href="courses.html" class="edit-btn">
+                        Explore Courses
+                    </a>
+                </div>
+
+                <div class="course-list" id="courseList"></div>
+
+            </section>
+
+        </section>
+    </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+    © 2026 Code With Jenish. All Rights Reserved.
+</footer>
+
+<script src="student-profile.js"></script>
+
+</body>
+</html>
+

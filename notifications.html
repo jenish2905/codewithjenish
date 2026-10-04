@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications | Code With Jenish</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
+body{background:#050816;color:#fff;min-height:100vh}
+:root{--cyan:#00ffff;--muted:#aab4c8}
+header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:18px 6%;background:#080d20;border-bottom:1px solid rgba(0,255,255,.18)}
+.logo{color:var(--cyan);font-size:21px;font-weight:800;text-decoration:none}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a{color:#dce4f4;text-decoration:none;font-size:14px}
+nav a:hover,nav a.active{color:var(--cyan)}
+.container{width:min(950px,92%);margin:40px auto 60px}
+.heading{margin-bottom:25px}
+.heading h1{font-size:clamp(27px,4vw,36px);margin-bottom:8px}
+.heading h1 span{color:var(--cyan)}
+.heading p{color:var(--muted);font-size:14px}
+.summary{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;padding:20px;background:rgba(255,255,255,.04);border:1px solid rgba(0,255,255,.18);border-radius:14px;margin-bottom:22px}
+.summary p{color:var(--muted);font-size:14px}
+.summary strong{color:var(--cyan);font-size:21px}
+button,select{padding:10px 14px;border-radius:8px;border:1px solid var(--cyan);background:transparent;color:var(--cyan);font-weight:600;font-size:13px}
+button{cursor:pointer}
+button:hover{background:var(--cyan);color:#050816}
+button:disabled{opacity:.4;cursor:not-allowed}
+select{background:#10182d}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.filters{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.filters h2{font-size:20px}
+.list{display:flex;flex-direction:column;gap:13px}
+.item{display:flex;gap:15px;padding:19px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(255,255,255,.04)}
+.item.unread{border-color:rgba(0,255,255,.35);background:rgba(0,255,255,.045)}
+.icon{flex-shrink:0;width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(0,255,255,.1);font-size:21px}
+.content{flex:1;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7px}
+.top h3{font-size:16px;overflow-wrap:anywhere}
+.dot{width:8px;height:8px;flex-shrink:0;background:var(--cyan);border-radius:50%}
+.content p{color:var(--muted);font-size:14px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+time{color:#7f8ba4;font-size:12px}
+.text-btn{border:0;padding:0;color:var(--cyan);background:none;font-size:12px}
+.text-btn:hover{background:none;color:white;text-decoration:underline}
+.empty{text-align:center;padding:45px 20px;border:1px dashed rgba(0,255,255,.25);border-radius:14px;color:var(--muted);line-height:1.8}
+footer{text-align:center;padding:22px;color:var(--muted);border-top:1px solid rgba(0,255,255,.18);font-size:13px}
+@media(max-width:650px){
+  header{align-items:flex-start;flex-direction:column}
+  nav{gap:12px}
+  .item{padding:14px;gap:10px}
+  .icon{width:38px;height:38px;font-size:18px}
+  .top h3{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="dashboard.html" class="logo">Code With Jenish</a>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="courses.html">Courses</a>
+    <a href="my-progress.html">My Progress</a>
+    <a href="notifications.html" class="active">Notifications</a>
+    <a href="student-profile.html">Profile</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section class="heading">
+    <h1>Notification <span>Center</span></h1>
+    <p>View course announcements and your learning updates.</p>
+  </section>
+
+  <section class="summary">
+    <p><strong id="unreadCount">0</strong> unread notifications</p>
+    <div class="actions">
+      <button id="markAll">Mark all as read</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="filters">
+      <h2>Recent Updates</h2>
+      <select id="filter">
+        <option value="all">All notifications</option>
+        <option value="unread">Unread only</option>
+        <option value="read">Read only</option>
+      </select>
+    </div>
+
+    <div id="list" class="list"></div>
+    <div id="empty" class="empty" style="display:none">
+      <div style="font-size:36px;margin-bottom:10px">🔔</div>
+      <h3>No notifications found</h3>
+      <p>You're all caught up for this filter.</p>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Code With Jenish. All Rights Reserved.</footer>
+
+<script>
+let user;
+try{
+  user=JSON.parse(localStorage.getItem("loggedInUser"));
+}catch{
+  user=null;
+}
+if(!user||!user.email){
+  window.location.href="login.html";
+}
+
+const email=String(user.email).trim().toLowerCase();
+const ANNOUNCEMENTS_KEY="announcements";
+const NOTIFICATIONS_KEY="notifications";
+const READ_KEY="announcementReads";
+
+function readArray(key){
+  try{
+    const data=JSON.parse(localStorage.getItem(key));
+    return Array.isArray(data)?data:[];
+  }catch{
+    return [];
+  }
+}
+
+function readReadIds(){
+  try{
+    const data=JSON.parse(localStorage.getItem(READ_KEY));
+    return data&&typeof data==="object"&&!Array.isArray(data)?data:{};
+  }catch{
+    return {};
+  }
+}
+
+function saveReadIds(data){
+  localStorage.setItem(READ_KEY,JSON.stringify(data));
+}
+
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function formatDate(value){
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime()))return "Date unavailable";
+  return date.toLocaleString(undefined,{dateStyle:"medium",timeStyle:"short"});
+}
+
+// Create one combined list of published announcements and
+// existing student-specific notifications.
+function getItems(){
+  const announcements=readArray(ANNOUNCEMENTS_KEY);
+  const notifications=readArray(NOTIFICATIONS_KEY);
+  const readMap=readReadIds();
+  const studentReads=Array.isArray(readMap[email])?readMap[email]:[];
+
+  const announcementItems=announcements
+    .filter(item=>{
+      if(item.status!=="published")return false;
+      if(item.audience==="email"){
+        return String(item.targetEmail||"").trim().toLowerCase()===email;
+      }
+      return item.audience==="all"||!item.audience;
+    })
+    .map(item=>({
+      id:String(item.id),
+      source:"announcement",
+      title:item.title||"Announcement",
+      message:item.message||"",
+      type:"announcement",
+      createdAt:item.updatedAt||item.createdAt,
+      read:studentReads.includes(String(item.id))
+    }));
+
+  const notificationItems=notifications
+    .filter(item=>String(item.userEmail||"").trim().toLowerCase()===email)
+    .map(item=>({
+      id:String(item.id),
+      source:"notification",
+      title:item.title||"Notification",
+      message:item.message||"",
+      type:item.type||"system",
+      createdAt:item.createdAt,
+      read:Boolean(item.read)
+    }));
+
+  return [...announcementItems,...notificationItems]
+    .sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+}
+
+function iconFor(type){
+  const icons={
+    announcement:"📢",
+    course:"📚",
+    quiz:"📝",
+    result:"🎯",
+    reminder:"⏰",
+    system:"⚙️"
+  };
+  return icons[type]||"🔔";
+}
+
+function markAnnouncementRead(id){
+  const map=readReadIds();
+  const ids=Array.isArray(map[email])?map[email]:[];
+  if(!ids.includes(id))ids.push(id);
+  map[email]=ids;
+  saveReadIds(map);
+}
+
+function markNotificationRead(id){
+  const all=readArray(NOTIFICATIONS_KEY);
+  const item=all.find(n=>
+    String(n.id)===id&&
+    String(n.userEmail||"").trim().toLowerCase()===email
+  );
+  if(item){
+    item.read=true;
+    localStorage.setItem(NOTIFICATIONS_KEY,JSON.stringify(all));
+  }
+}
+
+function markOne(item){
+  if(item.source==="announcement")markAnnouncementRead(item.id);
+  else markNotificationRead(item.id);
+}
+
+function render(){
+  const all=getItems();
+  const filter=document.getElementById("filter").value;
+  const unread=all.filter(item=>!item.read).length;
+
+  document.getElementById("unreadCount").textContent=unread;
+  document.getElementById("markAll").disabled=unread===0;
+
+  const visible=all.filter(item=>{
+    if(filter==="unread")return !item.read;
+    if(filter==="read")return item.read;
+    return true;
+  });
+
+  const list=document.getElementById("list");
+  const empty=document.getElementById("empty");
+
+  if(!visible.length){
+    list.innerHTML="";
+    empty.style.display="block";
+    return;
+  }
+  empty.style.display="none";
+
+  list.innerHTML=visible.map(item=>`
+    <article class="item ${item.read?"":"unread"}">
+      <div class="icon">${iconFor(item.type)}</div>
+      <div class="content">
+        <div class="top">
+          <h3>${escapeHTML(item.title)}</h3>
+          ${item.read?"":'<span class="dot" aria-label="Unread"></span>'}
+        </div>
+        <p>${escapeHTML(item.message)}</p>
+        <div class="meta">
+          <time>${escapeHTML(formatDate(item.createdAt))}</time>
+          ${item.read?"":`
+            <button class="text-btn" data-action="read"
+              data-source="${item.source}" data-id="${escapeHTML(item.id)}">
+              Mark as read
+            </button>
+          `}
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
+document.getElementById("list").addEventListener("click",event=>{
+  const button=event.target.closest("button[data-action='read']");
+  if(!button)return;
+
+  const item={
+    id:button.dataset.id,
+    source:button.dataset.source
+  };
+  markOne(item);
+  render();
+});
+
+document.getElementById("markAll").addEventListener("click",()=>{
+  const all=getItems();
+  all.filter(item=>!item.read).forEach(markOne);
+  render();
+});
+
+document.getElementById("filter").addEventListener("change",render);
+
+// Update if the admin changes announcements in another tab.
+window.addEventListener("storage",event=>{
+  if([ANNOUNCEMENTS_KEY,NOTIFICATIONS_KEY,READ_KEY].includes(event.key)){
+    render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
+

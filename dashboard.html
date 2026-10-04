@@ -1,748 +1,420 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Dashboard | Code With Jenish</title>
 
-    <link rel="preconnect"
-        href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
 
-    <link rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
     <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
 
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
 
-  <link rel="stylesheet" href="dashboard.css">
-</head>
-
-
-<body>
-
-
-<!-- =========================
+  <body>
+    <!-- =========================
      SIDEBAR
 ========================= -->
 
-<aside class="sidebar" id="sidebar">
-
-    <div class="logo">
-
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
         <span>&lt;/&gt;</span>
         Code With Jenish
+      </div>
 
-    </div>
+      <div class="menu-title">Main</div>
 
-
-    <div class="menu-title">
-        Main
-    </div>
-
-
-    <nav class="menu">
-
+      <nav class="menu">
         <a href="dashboard.html" class="active">
-            <i class="fa-solid fa-house"></i>
-            Dashboard
+          <i class="fa-solid fa-house"></i>
+          Dashboard
         </a>
-
 
         <a href="courses.html">
-            <i class="fa-solid fa-book-open"></i>
-            My Courses
+          <i class="fa-solid fa-book-open"></i>
+          My Courses
         </a>
-
 
         <a href="lesson-player.html">
-            <i class="fa-solid fa-video"></i>
-            Lessons
+          <i class="fa-solid fa-video"></i>
+          Lessons
         </a>
 
+        <a href="quiz-player.html">
+          <i class="fa-solid fa-clipboard-question"></i>
+          Quizzes
+        </a>
+
+        <a href="certificate.html">
+          <i class="fa-solid fa-certificate"></i>
+          Certificates
+        </a>
+        <a href="student-results.html">
+          <i class="fa-solid fa-chart-line"></i>
+          My Results
+        </a>
+       <a href="notifications.html">Notifications</a>
+       <a href="student-support.html">Contact Support</a>
+       <a href="student-enrollments.html">My Enrollments</a>
+       <a href="student-feedback.html">Course Feedback</a>
+      </nav>
+
+      <div class="menu-title">Account</div>
+
+      <nav class="menu">
+        <a href="student-profile.html">
+          <i class="fa-solid fa-user"></i> My Profile
+        </a>
 
         <a href="#">
-            <i class="fa-solid fa-clipboard-question"></i>
-            Quizzes
+          <i class="fa-solid fa-gear"></i>
+          Settings
         </a>
-
-
-        <a href="#">
-            <i class="fa-solid fa-certificate"></i>
-            Certificates
-        </a>
-
-    </nav>
-
-
-    <div class="menu-title">
-        Account
-    </div>
-
-
-    <nav class="menu">
-
-        <a href="#">
-            <i class="fa-solid fa-user"></i>
-            Profile
-        </a>
-
-
-        <a href="#">
-            <i class="fa-solid fa-gear"></i>
-            Settings
-        </a>
-
-
+        
         <a href="index.html" class="logout" id="logoutBtn">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            Logout
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Logout
         </a>
 
-    </nav>
+      </nav>
+    </aside>
 
-</aside>
-
-
-<!-- =========================
+    <!-- =========================
      MAIN
 ========================= -->
 
-<main class="main">
+    <main class="main">
+      <!-- TOPBAR -->
 
-
-    <!-- TOPBAR -->
-
-    <div class="topbar">
-
+      <div class="topbar">
         <div>
+          <button class="mobile-menu" id="mobileMenu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
 
-            <button
-                class="mobile-menu"
-                id="mobileMenu">
+          <h2>Dashboard</h2>
 
-                <i class="fa-solid fa-bars"></i>
-
-            </button>
-
-            <h2>Dashboard</h2>
-
-            <p>
-                Track your learning journey.
-            </p>
-
+          <p>Track your learning journey.</p>
         </div>
-
 
         <div class="profile">
+          <div>
+            <div class="profile-name" id="profileName">Student</div>
 
-            <div>
+            <div class="profile-role">Student</div>
+          </div>
 
-                <div
-                    class="profile-name"
-                    id="profileName">
-
-                    Student
-
-                </div>
-
-                <div class="profile-role">
-                    Student
-                </div>
-
-            </div>
-
-
-            <div
-                class="avatar"
-                id="avatar">
-
-                S
-
-            </div>
-
+          <div class="avatar" id="avatar">S</div>
         </div>
+      </div>
 
-    </div>
+      <!-- WELCOME -->
 
-
-    <!-- WELCOME -->
-
-    <section class="welcome">
-
+      <section class="welcome">
         <h1>
-            Welcome back,
-            <span id="welcomeName">
-                Student
-            </span>
-            👋
+          Welcome back,
+          <span id="welcomeName"> Student </span>
+          👋
         </h1>
 
-        <p>
-            Continue learning and keep building your skills.
-        </p>
+        <p>Continue learning and keep building your skills.</p>
+      </section>
 
-    </section>
+      <!-- STATS -->
 
-
-    <!-- STATS -->
-
-    <section class="stats">
-
-
+      <section class="stats">
         <div class="stat-card">
-
-            <div class="stat-top">
-
-                <div>
-                    <h3>3</h3>
-                    <p>Enrolled Courses</p>
-                </div>
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-book"></i>
-                </div>
-
+          <div class="stat-top">
+            <div>
+              <h3>3</h3>
+              <p>Enrolled Courses</p>
             </div>
 
+            <div class="stat-icon">
+              <i class="fa-solid fa-book"></i>
+            </div>
+          </div>
         </div>
-
 
         <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h3 id="overallProgress">35%</h3>
 
-            <div class="stat-top">
-
-                <div>
-                    <h3 id="overallProgress">
-                        35%
-                    </h3>
-
-                    <p>
-                        Overall Progress
-                    </p>
-                </div>
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-
+              <p>Overall Progress</p>
             </div>
 
+            <div class="stat-icon">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+          </div>
         </div>
-
 
         <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h3>12</h3>
 
-            <div class="stat-top">
-
-                <div>
-                    <h3>12</h3>
-
-                    <p>
-                        Lessons Completed
-                    </p>
-                </div>
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
+              <p>Lessons Completed</p>
             </div>
 
+            <div class="stat-icon">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
         </div>
-
 
         <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h3>86%</h3>
 
-            <div class="stat-top">
-
-                <div>
-                    <h3>86%</h3>
-
-                    <p>
-                        Average Quiz Score
-                    </p>
-                </div>
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-trophy"></i>
-                </div>
-
+              <p>Average Quiz Score</p>
             </div>
 
+            <div class="stat-icon">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+          </div>
         </div>
+      </section>
 
+      <!-- CONTENT -->
 
-    </section>
-
-
-    <!-- CONTENT -->
-
-    <div class="content-grid">
-
-
+      <div class="content-grid">
         <!-- LEFT -->
 
         <div>
+          <!-- COURSES -->
 
+          <div class="section-card">
+            <div class="section-header">
+              <h3>Continue Learning</h3>
 
-            <!-- COURSES -->
-
-            <div class="section-card">
-
-                <div class="section-header">
-
-                    <h3>
-                        Continue Learning
-                    </h3>
-
-                    <a href="#" class="view-all">
-                        View All
-                    </a>
-
-                </div>
-
-
-                <!-- Course 1 -->
-
-                <div class="course">
-
-                    <div class="course-icon">
-
-                        <i class="fa-solid fa-c"></i>
-
-                    </div>
-
-
-                    <div class="course-details">
-
-                        <h4>
-                            C Programming
-                        </h4>
-
-                        <p>
-                            8 of 20 lessons completed
-                        </p>
-
-
-                        <div class="progress-container">
-
-                            <div
-                                class="progress-bar"
-                                style="width:40%">
-                            </div>
-
-                        </div>
-
-
-                        <div class="progress-text">
-
-                            <span>
-                                Progress
-                            </span>
-
-                            <span>
-                                40%
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <a href="#"
-                        class="continue-btn">
-
-                        Continue
-
-                    </a>
-
-                </div>
-
-
-                <!-- Course 2 -->
-
-                <div class="course">
-
-                    <div class="course-icon">
-
-                        <i class="fa-brands fa-python"></i>
-
-                    </div>
-
-
-                    <div class="course-details">
-
-                        <h4>
-                            Python Programming
-                        </h4>
-
-                        <p>
-                            6 of 30 lessons completed
-                        </p>
-
-
-                        <div class="progress-container">
-
-                            <div
-                                class="progress-bar"
-                                style="width:20%">
-                            </div>
-
-                        </div>
-
-
-                        <div class="progress-text">
-
-                            <span>
-                                Progress
-                            </span>
-
-                            <span>
-                                20%
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <a href="#"
-                        class="continue-btn">
-
-                        Continue
-
-                    </a>
-
-                </div>
-
-
-                <!-- Course 3 -->
-
-                <div class="course">
-
-                    <div class="course-icon">
-
-                        <i class="fa-brands fa-js"></i>
-
-                    </div>
-
-
-                    <div class="course-details">
-
-                        <h4>
-                            JavaScript
-                        </h4>
-
-                        <p>
-                            9 of 20 lessons completed
-                        </p>
-
-
-                        <div class="progress-container">
-
-                            <div
-                                class="progress-bar"
-                                style="width:45%">
-                            </div>
-
-                        </div>
-
-
-                        <div class="progress-text">
-
-                            <span>
-                                Progress
-                            </span>
-
-                            <span>
-                                45%
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <a href="#"
-                        class="continue-btn">
-
-                        Continue
-
-                    </a>
-
-                </div>
-
-
+              <a href="courses.html" class="view-all"> View All </a>
             </div>
 
+            <!-- Course 1 -->
 
-            <!-- RECENT ACTIVITY -->
+            <div class="course">
+              <div class="course-icon">
+                <i class="fa-solid fa-c"></i>
+              </div>
 
-            <div class="section-card">
+              <div class="course-details">
+                <h4>C Programming</h4>
 
-                <div class="section-header">
+                <p>8 of 20 lessons completed</p>
 
-                    <h3>
-                        Recent Activity
-                    </h3>
-
+                <div class="progress-container">
+                  <div class="progress-bar" style="width: 40%"></div>
                 </div>
 
+                <div class="progress-text">
+                  <span> Progress </span>
 
-                <div class="activity">
-
-                    <div class="activity-icon">
-
-                        <i class="fa-solid fa-play"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h4>
-                            Completed C Functions
-                        </h4>
-
-                        <p>
-                            2 hours ago
-                        </p>
-
-                    </div>
-
+                  <span> 40% </span>
                 </div>
+              </div>
 
-
-                <div class="activity">
-
-                    <div class="activity-icon">
-
-                        <i class="fa-solid fa-clipboard-check"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h4>
-                            Completed Python Quiz
-                        </h4>
-
-                        <p>
-                            Yesterday
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="activity">
-
-                    <div class="activity-icon">
-
-                        <i class="fa-solid fa-trophy"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h4>
-                            Scored 90% in JavaScript Quiz
-                        </h4>
-
-                        <p>
-                            2 days ago
-                        </p>
-
-                    </div>
-
-                </div>
-
-
+              <a href="#" class="continue-btn"> Continue </a>
             </div>
 
+            <!-- Course 2 -->
+
+            <div class="course">
+              <div class="course-icon">
+                <i class="fa-brands fa-python"></i>
+              </div>
+
+              <div class="course-details">
+                <h4>Python Programming</h4>
+
+                <p>6 of 30 lessons completed</p>
+
+                <div class="progress-container">
+                  <div class="progress-bar" style="width: 20%"></div>
+                </div>
+
+                <div class="progress-text">
+                  <span> Progress </span>
+
+                  <span> 20% </span>
+                </div>
+              </div>
+
+              <a href="#" class="continue-btn"> Continue </a>
+            </div>
+
+            <!-- Course 3 -->
+
+            <div class="course">
+              <div class="course-icon">
+                <i class="fa-brands fa-js"></i>
+              </div>
+
+              <div class="course-details">
+                <h4>JavaScript</h4>
+
+                <p>9 of 20 lessons completed</p>
+
+                <div class="progress-container">
+                  <div class="progress-bar" style="width: 45%"></div>
+                </div>
+
+                <div class="progress-text">
+                  <span> Progress </span>
+
+                  <span> 45% </span>
+                </div>
+              </div>
+
+              <a href="#" class="continue-btn"> Continue </a>
+            </div>
+          </div>
+
+          <!-- RECENT ACTIVITY -->
+
+          <div class="section-card">
+            <div class="section-header">
+              <h3>Recent Activity</h3>
+            </div>
+
+            <div class="activity">
+              <div class="activity-icon">
+                <i class="fa-solid fa-play"></i>
+              </div>
+
+              <div>
+                <h4>Completed C Functions</h4>
+
+                <p>2 hours ago</p>
+              </div>
+            </div>
+
+            <div class="activity">
+              <div class="activity-icon">
+                <i class="fa-solid fa-clipboard-check"></i>
+              </div>
+
+              <div>
+                <h4>Completed Python Quiz</h4>
+
+                <p>Yesterday</p>
+              </div>
+            </div>
+
+            <div class="activity">
+              <div class="activity-icon">
+                <i class="fa-solid fa-trophy"></i>
+              </div>
+
+              <div>
+                <h4>Scored 90% in JavaScript Quiz</h4>
+
+                <p>2 days ago</p>
+              </div>
+            </div>
+          </div>
         </div>
-
 
         <!-- RIGHT -->
 
         <div>
+          <!-- SKILLS -->
 
-
-            <!-- SKILLS -->
-
-            <div class="section-card">
-
-                <div class="section-header">
-
-                    <h3>
-                        My Skills
-                    </h3>
-
-                </div>
-
-
-                <div class="skill">
-
-                    <div class="skill-top">
-
-                        <span>C Programming</span>
-
-                        <span>70%</span>
-
-                    </div>
-
-                    <div class="progress-container">
-
-                        <div
-                            class="progress-bar"
-                            style="width:70%">
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="skill">
-
-                    <div class="skill-top">
-
-                        <span>Python</span>
-
-                        <span>45%</span>
-
-                    </div>
-
-                    <div class="progress-container">
-
-                        <div
-                            class="progress-bar"
-                            style="width:45%">
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="skill">
-
-                    <div class="skill-top">
-
-                        <span>JavaScript</span>
-
-                        <span>60%</span>
-
-                    </div>
-
-                    <div class="progress-container">
-
-                        <div
-                            class="progress-bar"
-                            style="width:60%">
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="skill">
-
-                    <div class="skill-top">
-
-                        <span>HTML & CSS</span>
-
-                        <span>80%</span>
-
-                    </div>
-
-                    <div class="progress-container">
-
-                        <div
-                            class="progress-bar"
-                            style="width:80%">
-                        </div>
-
-                    </div>
-
-                </div>
-
+          <div class="section-card">
+            <div class="section-header">
+              <h3>My Skills</h3>
             </div>
 
+            <div class="skill">
+              <div class="skill-top">
+                <span>C Programming</span>
 
-            <!-- CERTIFICATE -->
+                <span>70%</span>
+              </div>
 
-            <div class="section-card">
-
-                <div class="section-header">
-
-                    <h3>
-                        Certificates
-                    </h3>
-
-                </div>
-
-
-                <div style="
-                    text-align:center;
-                    padding:20px 5px;
-                ">
-
-                    <i
-                        class="fa-solid fa-certificate"
-                        style="
-                        font-size:45px;
-                        color:#00e5ff;
-                        margin-bottom:15px;
-                    ">
-                    </i>
-
-
-                    <h4>
-                        Keep Learning!
-                    </h4>
-
-
-                    <p style="
-                        color:#9ca3af;
-                        font-size:11px;
-                        margin-top:7px;
-                    ">
-
-                        Complete a course to
-                        earn your first certificate.
-
-                    </p>
-
-                </div>
-
+              <div class="progress-container">
+                <div class="progress-bar" style="width: 70%"></div>
+              </div>
             </div>
 
+            <div class="skill">
+              <div class="skill-top">
+                <span>Python</span>
 
+                <span>45%</span>
+              </div>
+
+              <div class="progress-container">
+                <div class="progress-bar" style="width: 45%"></div>
+              </div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-top">
+                <span>JavaScript</span>
+
+                <span>60%</span>
+              </div>
+
+              <div class="progress-container">
+                <div class="progress-bar" style="width: 60%"></div>
+              </div>
+            </div>
+
+            <div class="skill">
+              <div class="skill-top">
+                <span>HTML & CSS</span>
+
+                <span>80%</span>
+              </div>
+
+              <div class="progress-container">
+                <div class="progress-bar" style="width: 80%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CERTIFICATE -->
+
+          <div class="section-card">
+            <div class="section-header">
+              <h3>Certificates</h3>
+            </div>
+
+            <div style="text-align: center; padding: 20px 5px">
+              <i
+                class="fa-solid fa-certificate"
+                style="font-size: 45px; color: #00e5ff; margin-bottom: 15px"
+              >
+              </i>
+
+              <h4>Keep Learning!</h4>
+
+              <p style="color: #9ca3af; font-size: 11px; margin-top: 7px">
+                Complete a course to earn your first certificate.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
+    </main>
 
-    </div>
-
-</main>
-
-
-
-
-<script src="dashboard.js"></script>
-</body>
-
+    <script src="dashboard.js"></script>
+  </body>
 </html>
-

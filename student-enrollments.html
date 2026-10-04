@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Enrollments | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: white;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+    }
+    main { width: 92%; max-width: 1100px; margin: 30px auto; }
+    h1, h2 { color: #00ffff; }
+    .panel, .card {
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+    button, a {
+      display: inline-block;
+      padding: 10px 15px;
+      border: 0;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .muted { color: #aab5cb; }
+    .status { color: #00ffff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish</h2>
+    <a href="dashboard.html">Dashboard</a>
+  </header>
+
+  <main>
+    <h1>Course Enrollment</h1>
+    <p class="muted">
+      Request access to a course and track your enrollment status.
+    </p>
+
+    <section class="panel">
+      <h2>Available Courses</h2>
+      <div id="courseList" class="grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>My Enrollment Requests</h2>
+      <div id="requestList"></div>
+    </section>
+
+    <section class="panel">
+      <h2>My Approved Courses</h2>
+      <div id="approvedList"></div>
+    </section>
+  </main>
+
+  <script>
+    const user = JSON.parse(
+      localStorage.getItem("loggedInUser") || "null"
+    );
+
+    if (!user || !user.email) location.href = "login.html";
+
+    const read = key =>
+      JSON.parse(localStorage.getItem(key) || "[]");
+
+    const write = (key, data) =>
+      localStorage.setItem(key, JSON.stringify(data));
+
+    const email = user.email.trim().toLowerCase();
+
+    function getMyRequests() {
+      return read("enrollmentRequests").filter(r =>
+        r.userEmail?.toLowerCase() === email
+      );
+    }
+
+    function getMyEnrollments() {
+      return read("enrollments").filter(e =>
+        e.userEmail?.toLowerCase() === email
+      );
+    }
+
+    function requestEnrollment(course) {
+      const enrollments = read("enrollments");
+      const requests = read("enrollmentRequests");
+
+      const alreadyEnrolled = enrollments.some(e =>
+        e.userEmail?.toLowerCase() === email &&
+        String(e.courseId) === String(course.id)
+      );
+
+      const existingRequest = requests.find(r =>
+        r.userEmail?.toLowerCase() === email &&
+        String(r.courseId) === String(course.id) &&
+        r.status === "pending"
+      );
+
+      if (alreadyEnrolled) {
+        alert("You are already enrolled in this course.");
+        return;
+      }
+
+      if (existingRequest) {
+        alert("Your enrollment request is already pending.");
+        return;
+      }
+
+      const rejected = requests.find(r =>
+        r.userEmail?.toLowerCase() === email &&
+        String(r.courseId) === String(course.id) &&
+        r.status === "rejected"
+      );
+
+      if (rejected) {
+        rejected.status = "pending";
+        rejected.requestedAt = new Date().toISOString();
+        rejected.updatedAt = rejected.requestedAt;
+        rejected.adminNote = "";
+        write("enrollmentRequests", requests);
+      } else {
+        requests.push({
+          id: Date.now().toString(),
+          userEmail: email,
+          userName: user.name || email,
+          courseId: course.id,
+          courseName: course.name,
+          status: "pending",
+          requestedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          adminNote: ""
+        });
+        write("enrollmentRequests", requests);
+      }
+
+      renderAll();
+      alert("Enrollment request submitted.");
+    }
+
+    function renderCourses() {
+      const list = document.getElementById("courseList");
+      list.innerHTML = "";
+
+      const courses = read("courses").filter(c =>
+        c.status === "published"
+      );
+
+      if (!courses.length) {
+        list.textContent = "No published courses available.";
+        return;
+      }
+
+      const requests = getMyRequests();
+      const enrollments = getMyEnrollments();
+
+      courses.forEach(course => {
+        const enrolled = enrollments.some(e =>
+          String(e.courseId) === String(course.id)
+        );
+
+        const pending = requests.some(r =>
+          String(r.courseId) === String(course.id) &&
+          r.status === "pending"
+        );
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("h3");
+        title.textContent = course.name;
+
+        const description = document.createElement("p");
+        description.className = "muted";
+        description.textContent = course.description || "";
+
+        const price = document.createElement("p");
+        price.textContent = course.price
+          ? `Price: ${course.price}`
+          : "Free course";
+
+        const button = document.createElement("button");
+
+        if (enrolled) {
+          button.textContent = "Enrolled";
+          button.disabled = true;
+        } else if (pending) {
+          button.textContent = "Request Pending";
+          button.disabled = true;
+        } else {
+          button.textContent = "Request Enrollment";
+          button.onclick = () => requestEnrollment(course);
+        }
+
+        card.append(title, description, price, button);
+        list.appendChild(card);
+      });
+    }
+
+    function renderRequests() {
+      const list = document.getElementById("requestList");
+      list.innerHTML = "";
+
+      const requests = getMyRequests()
+        .sort((a, b) =>
+          new Date(b.requestedAt) - new Date(a.requestedAt)
+        );
+
+      if (!requests.length) {
+        list.textContent = "You have no enrollment requests.";
+        return;
+      }
+
+      requests.forEach(request => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("h3");
+        title.textContent = request.courseName;
+
+        const status = document.createElement("p");
+        status.className = "status";
+        status.textContent =
+          "Status: " + request.status.toUpperCase();
+
+        const note = document.createElement("p");
+        note.className = "muted";
+        note.textContent = request.adminNote
+          ? "Admin note: " + request.adminNote
+          : "";
+
+        card.append(title, status, note);
+        list.appendChild(card);
+      });
+    }
+
+    function renderApproved() {
+      const list = document.getElementById("approvedList");
+      list.innerHTML = "";
+
+      const enrollments = getMyEnrollments();
+
+      if (!enrollments.length) {
+        list.textContent = "No approved courses yet.";
+        return;
+      }
+
+      enrollments.forEach(enrollment => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("h3");
+        title.textContent = enrollment.courseName || "Course";
+
+        const progress = document.createElement("p");
+        progress.textContent =
+          `Progress: ${Number(enrollment.progress) || 0}%`;
+
+        const open = document.createElement("a");
+        open.href =
+          `course-details.html?id=${encodeURIComponent(enrollment.courseId)}`;
+        open.textContent = "Open Course";
+
+        card.append(title, progress, open);
+        list.appendChild(card);
+      });
+    }
+
+    function renderAll() {
+      renderCourses();
+      renderRequests();
+      renderApproved();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
+

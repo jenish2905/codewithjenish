@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Certificate | Code With Jenish</title>
+
+ <link rel="stylesheet" href="certificate.css">
+</head>
+
+<body>
+
+  <header>
+    <a href="dashboard.html" class="logo">Code With Jenish</a>
+
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="courses.html">Courses</a>
+      <a href="my-progress.html">My Progress</a>
+      <a href="student-profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-heading">
+      <h1>My <span>Certificates</span></h1>
+      <p>View and print certificates for courses you've completed.</p>
+    </div>
+
+    <div class="controls">
+      <select id="courseSelect" aria-label="Select completed course">
+        <option value="">Select a completed course</option>
+      </select>
+
+      <button id="printBtn" disabled onclick="window.print()">
+        🖨️ Print Certificate
+      </button>
+    </div>
+
+    <section id="certificate" class="certificate hidden">
+      <div class="certificate-brand">CODE WITH JENISH</div>
+
+      <div class="certificate-label">CERTIFICATE OF COMPLETION</div>
+
+      <h2>Certificate</h2>
+
+      <p class="cert-intro">This certificate is proudly presented to</p>
+
+      <div id="studentName" class="student-name"></div>
+
+      <p class="cert-description">
+        for successfully completing the course
+      </p>
+
+      <div id="courseName" class="course-name"></div>
+
+      <p class="cert-description">
+        and completing the course lessons as recorded in the learning platform.
+      </p>
+
+      <div class="certificate-bottom">
+        <div class="cert-meta">
+          <strong id="completionDate">—</strong>
+          <span>Completion Date</span>
+        </div>
+
+        <div class="seal">
+          COURSE<br>COMPLETED
+        </div>
+
+        <div class="cert-meta">
+          <strong id="certificateId">—</strong>
+          <span>Certificate ID</span>
+        </div>
+      </div>
+    </section>
+
+    <div id="message" class="message">
+      Select a completed course to view your certificate.
+      <br>
+      If you have not completed a course yet, visit
+      <a href="my-progress.html">My Progress</a>.
+    </div>
+  </main>
+
+  <footer>
+    © 2026 Code With Jenish. All Rights Reserved.
+  </footer>
+
+<script src="certificate.js"></script>
+
+</body>
+</html>
+

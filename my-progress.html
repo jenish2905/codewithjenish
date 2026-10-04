@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Learning Progress | Code With Jenish</title>
+
+ <link rel="stylesheet" href="my-progress.css">
+</head>
+
+<body>
+
+  <header>
+    <a href="dashboard.html" class="logo">Code With Jenish</a>
+
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="courses.html">Courses</a>
+      <a href="student-results.html">Quiz Results</a>
+      <a href="my-progress.html" class="active">My Progress</a>
+      <a href="student-profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="welcome">
+      <h1>My Learning <span>Progress</span></h1>
+      <p id="welcomeText">Track your learning journey and achievements.</p>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="icon">📚</div>
+        <h2 id="totalCourses">0</h2>
+        <p>Enrolled Courses</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">📖</div>
+        <h2 id="completedLessons">0</h2>
+        <p>Completed Lessons</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">📝</div>
+        <h2 id="quizAttempts">0</h2>
+        <p>Quiz Attempts</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">🎯</div>
+        <h2 id="averageScore">0%</h2>
+        <p>Average Quiz Score</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Course-wise Progress</h2>
+      <div class="course-list" id="courseList"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Recent Quiz Performance</h2>
+      <div class="quiz-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>Quiz</th>
+              <th>Course</th>
+              <th>Score</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="quizTable"></tbody>
+        </table>
+        <div id="quizEmpty" class="empty" style="display:none;">
+          No quiz attempts found yet.
+          <br>
+          <a href="courses.html">Explore courses</a> and take a quiz to see your performance.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 Code With Jenish. All Rights Reserved.
+  </footer>
+
+<script src="my-progress.js"></script>
+</body>
+</html>
+

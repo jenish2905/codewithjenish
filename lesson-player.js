@@ -1,219 +1,159 @@
-  /* ==========================================
+/* ==========================================
        AUTHENTICATION
     ========================================== */
 
-    const loggedInUser =
-        JSON.parse(localStorage.getItem("loggedInUser"));
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
-    if (!loggedInUser) {
-        window.location.href = "login.html";
-    }
+if (!loggedInUser) {
+  window.location.href = "login.html";
+}
 
-    if (loggedInUser) {
-        document.getElementById("userName").textContent =
-            loggedInUser.name || "Student";
-    }
+if (loggedInUser) {
+  document.getElementById("userName").textContent =
+    loggedInUser.name || "Student";
+}
 
-
-    /* ==========================================
+/* ==========================================
        URL PARAMETERS
     ========================================== */
 
-    const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
-    const courseId = Number(params.get("course"));
-    const lessonId = Number(params.get("lesson"));
+const courseId = Number(params.get("course"));
+const lessonId = Number(params.get("lesson"));
 
-
-    /* ==========================================
+/* ==========================================
        DATA
     ========================================== */
 
-    let courses =
-        JSON.parse(localStorage.getItem("courses")) || [];
+let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let lessons =
-        JSON.parse(localStorage.getItem("lessons")) || [];
+let lessons = JSON.parse(localStorage.getItem("lessons")) || [];
 
-    let enrollments =
-        JSON.parse(localStorage.getItem("enrollments")) || [];
+let enrollments = JSON.parse(localStorage.getItem("enrollments")) || [];
 
-
-    /* ==========================================
+/* ==========================================
        CURRENT COURSE
     ========================================== */
 
-    const course =
-        courses.find(c => Number(c.id) === courseId);
+const course = courses.find((c) => Number(c.id) === courseId);
 
+if (!course) {
+  alert("Course not found.");
 
-    if (!course) {
+  window.location.href = "courses.html";
+}
 
-        alert("Course not found.");
-
-        window.location.href = "courses.html";
-    }
-
-
-    /* ==========================================
+/* ==========================================
        CURRENT ENROLLMENT
     ========================================== */
 
-    let enrollment =
-        enrollments.find(e =>
-            e.userEmail === loggedInUser.email &&
-            Number(e.courseId) === courseId
-        );
+let enrollment = enrollments.find(
+  (e) => e.userEmail === loggedInUser.email && Number(e.courseId) === courseId,
+);
 
+if (!enrollment) {
+  alert("Please enroll in this course first.");
 
-    if (!enrollment) {
+  window.location.href = "course-details.html?id=" + courseId;
+}
 
-        alert("Please enroll in this course first.");
-
-        window.location.href =
-            "course-details.html?id=" + courseId;
-    }
-
-
-    /* ==========================================
+/* ==========================================
        COURSE LESSONS
     ========================================== */
 
-    let courseLessons = lessons
-        .filter(l => Number(l.courseId) === courseId)
-        .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+let courseLessons = lessons
+  .filter((l) => Number(l.courseId) === courseId)
+  .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
 
-
-    /* ==========================================
+/* ==========================================
        CURRENT LESSON
     ========================================== */
 
-    let currentIndex =
-        courseLessons.findIndex(
-            l => Number(l.id) === lessonId
-        );
+let currentIndex = courseLessons.findIndex((l) => Number(l.id) === lessonId);
 
+if (currentIndex < 0) {
+  currentIndex = 0;
+}
 
-    if (currentIndex < 0) {
-        currentIndex = 0;
-    }
-
-
-    /* ==========================================
+/* ==========================================
        LOAD LESSON
     ========================================== */
 
-    function loadLesson() {
+function loadLesson() {
+  const lesson = courseLessons[currentIndex];
 
-        const lesson = courseLessons[currentIndex];
+  if (!lesson) {
+    showToast("No lesson available.");
+    return;
+  }
 
-        if (!lesson) {
-            showToast("No lesson available.");
-            return;
-        }
+  document.title = lesson.title + " | Code With Jenish";
 
-        document.title =
-            lesson.title + " | Code With Jenish";
+  document.getElementById("courseBadge").textContent = course.name;
 
+  document.getElementById("durationBadge").innerHTML =
+    '<i class="fa-regular fa-clock"></i> ' + (lesson.duration || "10 min");
 
-        document.getElementById("courseBadge").textContent =
-            course.name;
+  document.getElementById("lessonNumberBadge").textContent =
+    "Lesson " + (currentIndex + 1);
 
+  document.getElementById("lessonTitle").textContent = lesson.title;
 
-        document.getElementById("durationBadge").innerHTML =
-            '<i class="fa-regular fa-clock"></i> ' +
-            (lesson.duration || "10 min");
+  document.getElementById("lessonDescription").textContent =
+    lesson.description || "Learn this important concept step by step.";
 
+  document.getElementById("sidebarCourse").textContent = course.name;
 
-        document.getElementById("lessonNumberBadge").textContent =
-            "Lesson " + (currentIndex + 1);
+  document.getElementById("lessonCountText").textContent =
+    courseLessons.length + " lessons";
 
+  loadVideo(lesson);
 
-        document.getElementById("lessonTitle").textContent =
-            lesson.title;
+  renderLessonList();
 
+  updateProgress();
 
-        document.getElementById("lessonDescription").textContent =
-            lesson.description ||
-            "Learn this important concept step by step.";
+  updateNavigation();
 
+  updateCompleteButton();
+}
 
-        document.getElementById("sidebarCourse").textContent =
-            course.name;
-
-
-        document.getElementById("lessonCountText").textContent =
-            courseLessons.length + " lessons";
-
-
-        loadVideo(lesson);
-
-        renderLessonList();
-
-        updateProgress();
-
-        updateNavigation();
-
-        updateCompleteButton();
-    }
-
-
-    /* ==========================================
+/* ==========================================
        VIDEO
     ========================================== */
 
-    function loadVideo(lesson) {
+function loadVideo(lesson) {
+  const container = document.getElementById("videoContainer");
 
-        const container =
-            document.getElementById("videoContainer");
+  if (lesson.video && lesson.video.trim() !== "") {
+    let videoURL = lesson.video.trim();
 
-
-        if (lesson.video &&
-            lesson.video.trim() !== "") {
-
-            let videoURL = lesson.video.trim();
-
-
-            /*
+    /*
                 You can store:
                 1. YouTube embed URL
                 2. Direct video URL
                 3. iframe URL
             */
 
+    if (
+      videoURL.includes("youtube.com/watch") ||
+      videoURL.includes("youtu.be/")
+    ) {
+      let videoId = "";
 
-            if (
-                videoURL.includes("youtube.com/watch") ||
-                videoURL.includes("youtu.be/")
-            ) {
+      if (videoURL.includes("youtu.be/")) {
+        videoId = videoURL.split("youtu.be/")[1].split("?")[0];
+      } else {
+        videoId = new URL(videoURL).searchParams.get("v");
+      }
 
-                let videoId = "";
+      if (videoId) {
+        videoURL = "https://www.youtube.com/embed/" + videoId;
+      }
+    }
 
-                if (videoURL.includes("youtu.be/")) {
-
-                    videoId =
-                        videoURL.split("youtu.be/")[1]
-                        .split("?")[0];
-
-                } else {
-
-                    videoId =
-                        new URL(videoURL)
-                        .searchParams
-                        .get("v");
-                }
-
-
-                if (videoId) {
-
-                    videoURL =
-                        "https://www.youtube.com/embed/" +
-                        videoId;
-                }
-            }
-
-
-            container.innerHTML = `
+    container.innerHTML = `
                 <iframe
                     src="${escapeAttribute(videoURL)}"
                     title="${escapeAttribute(lesson.title)}"
@@ -221,10 +161,8 @@
                     allowfullscreen>
                 </iframe>
             `;
-
-        } else {
-
-            container.innerHTML = `
+  } else {
+    container.innerHTML = `
                 <div class="video-placeholder">
                     <i class="fa-solid fa-play"></i>
 
@@ -235,55 +173,37 @@
                     </p>
                 </div>
             `;
-        }
-    }
+  }
+}
 
-
-    /* ==========================================
+/* ==========================================
        LESSON LIST
     ========================================== */
 
-    function renderLessonList() {
+function renderLessonList() {
+  const list = document.getElementById("lessonList");
 
-        const list =
-            document.getElementById("lessonList");
+  list.innerHTML = "";
 
-        list.innerHTML = "";
+  courseLessons.forEach((lesson, index) => {
+    const completed = isLessonCompleted(lesson.id);
 
+    const locked = lesson.locked === true;
 
-        courseLessons.forEach((lesson, index) => {
+    const item = document.createElement("div");
 
-            const completed =
-                isLessonCompleted(lesson.id);
+    item.className =
+      "lesson-item" +
+      (index === currentIndex ? " current" : "") +
+      (completed ? " completed-item" : "") +
+      (locked ? " locked" : "");
 
-
-            const locked =
-                lesson.locked === true;
-
-
-            const item =
-                document.createElement("div");
-
-
-            item.className =
-                "lesson-item" +
-                (index === currentIndex
-                    ? " current"
-                    : "") +
-                (completed
-                    ? " completed-item"
-                    : "") +
-                (locked
-                    ? " locked"
-                    : "");
-
-
-            item.innerHTML = `
+    item.innerHTML = `
 
                 <div class="lesson-icon">
 
                     ${
-                        completed
+                      completed
                         ? '<i class="fa-solid fa-check"></i>'
                         : '<i class="fa-solid fa-play"></i>'
                     }
@@ -307,440 +227,397 @@
                 <div class="status-icon">
 
                     ${
-                        locked
+                      locked
                         ? '<i class="fa-solid fa-lock lock"></i>'
                         : completed
-                        ? '<i class="fa-solid fa-circle-check done"></i>'
-                        : ''
+                          ? '<i class="fa-solid fa-circle-check done"></i>'
+                          : ""
                     }
 
                 </div>
             `;
 
+    item.onclick = () => {
+      if (locked) {
+        showToast("This lesson is locked.");
 
-            item.onclick = () => {
+        return;
+      }
 
-                if (locked) {
+      currentIndex = index;
 
-                    showToast(
-                        "This lesson is locked."
-                    );
+      loadLesson();
+    };
 
-                    return;
-                }
+    list.appendChild(item);
+  });
+}
 
-
-                currentIndex = index;
-
-                loadLesson();
-            };
-
-
-            list.appendChild(item);
-
-        });
-    }
-
-
-    /* ==========================================
+/* ==========================================
        COMPLETION CHECK
     ========================================== */
 
-    function isLessonCompleted(id) {
+function isLessonCompleted(id) {
+  return (
+    Array.isArray(enrollment.completedLessonIds) &&
+    enrollment.completedLessonIds.map(Number).includes(Number(id))
+  );
+}
 
-        return Array.isArray(
-            enrollment.completedLessonIds
-        ) &&
-        enrollment.completedLessonIds
-            .map(Number)
-            .includes(Number(id));
-    }
-
-
-    /* ==========================================
+/* ==========================================
        COMPLETE LESSON
     ========================================== */
 
-    function completeLesson() {
+function completeLesson() {
+  const lesson = courseLessons[currentIndex];
 
-        const lesson =
-            courseLessons[currentIndex];
+  if (!lesson) return;
 
+  if (!Array.isArray(enrollment.completedLessonIds)) {
+    enrollment.completedLessonIds = [];
+  }
 
-        if (!lesson) return;
+  if (!enrollment.completedLessonIds.map(Number).includes(Number(lesson.id))) {
+    enrollment.completedLessonIds.push(Number(lesson.id));
+  }
 
+  enrollment.completedLessons = enrollment.completedLessonIds.length;
 
-        if (!Array.isArray(
-            enrollment.completedLessonIds
-        )) {
+  enrollment.progress =
+    courseLessons.length > 0
+      ? Math.round((enrollment.completedLessons / courseLessons.length) * 100)
+      : 0;
 
-            enrollment.completedLessonIds = [];
-        }
+  enrollment.lastLessonId = lesson.id;
 
+  enrollment.lastAccessed = new Date().toISOString();
 
-        if (!enrollment.completedLessonIds
-            .map(Number)
-            .includes(Number(lesson.id))) {
+  saveEnrollment();
 
-            enrollment.completedLessonIds.push(
-                Number(lesson.id)
-            );
-        }
+  updateProgress();
 
+  renderLessonList();
 
-        enrollment.completedLessons =
-            enrollment.completedLessonIds.length;
+  updateCompleteButton();
 
+  showToast("Lesson completed successfully!");
 
-        enrollment.progress =
-            courseLessons.length > 0
-            ? Math.round(
-                (
-                    enrollment.completedLessons /
-                    courseLessons.length
-                ) * 100
-            )
-            : 0;
-
-
-        enrollment.lastLessonId =
-            lesson.id;
-
-
-        enrollment.lastAccessed =
-            new Date().toISOString();
-
-
-        saveEnrollment();
-
-
-        updateProgress();
-
-        renderLessonList();
-
-        updateCompleteButton();
-
-
-        showToast(
-            "Lesson completed successfully!"
-        );
-
-
-        /*
+  /*
             Automatically open next lesson
             after completion.
         */
 
-        if (
-            currentIndex <
-            courseLessons.length - 1
-        ) {
+  if (currentIndex < courseLessons.length - 1) {
+    setTimeout(() => {
+      currentIndex++;
 
-            setTimeout(() => {
+      loadLesson();
+    }, 800);
+  } else {
+    showToast("🎉 Course lessons completed!");
+  }
+}
 
-                currentIndex++;
-
-                loadLesson();
-
-            }, 800);
-
-        } else {
-
-            showToast(
-                "🎉 Course lessons completed!"
-            );
-        }
-    }
-
-
-    /* ==========================================
+/* ==========================================
        SAVE ENROLLMENT
     ========================================== */
 
-    function saveEnrollment() {
+function saveEnrollment() {
+  const index = enrollments.findIndex(
+    (e) =>
+      e.userEmail === loggedInUser.email && Number(e.courseId) === courseId,
+  );
 
-        const index =
-            enrollments.findIndex(e =>
-                e.userEmail === loggedInUser.email &&
-                Number(e.courseId) === courseId
-            );
+  if (index !== -1) {
+    enrollments[index] = enrollment;
+  } else {
+    enrollments.push(enrollment);
+  }
 
+  localStorage.setItem("enrollments", JSON.stringify(enrollments));
+}
 
-        if (index !== -1) {
-
-            enrollments[index] =
-                enrollment;
-
-        } else {
-
-            enrollments.push(enrollment);
-        }
-
-
-        localStorage.setItem(
-            "enrollments",
-            JSON.stringify(enrollments)
-        );
-    }
-
-
-    /* ==========================================
+/* ==========================================
        UPDATE PROGRESS
     ========================================== */
 
-    function updateProgress() {
+function updateProgress() {
+  const completed = enrollment.completedLessons || 0;
 
-        const completed =
-            enrollment.completedLessons || 0;
+  const total = courseLessons.length;
 
+  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-        const total =
-            courseLessons.length;
+  enrollment.progress = percentage;
 
+  document.getElementById("progressPercent").textContent = percentage + "%";
 
-        const percentage =
-            total > 0
-            ? Math.round(
-                (completed / total) * 100
-            )
-            : 0;
+  document.getElementById("progressFill").style.width = percentage + "%";
+}
 
-
-        enrollment.progress =
-            percentage;
-
-
-        document.getElementById(
-            "progressPercent"
-        ).textContent =
-            percentage + "%";
-
-
-        document.getElementById(
-            "progressFill"
-        ).style.width =
-            percentage + "%";
-    }
-
-
-    /* ==========================================
+/* ==========================================
        COMPLETE BUTTON
     ========================================== */
 
-    function updateCompleteButton() {
+function updateCompleteButton() {
+  const button = document.getElementById("completeBtn");
 
-        const button =
-            document.getElementById("completeBtn");
+  const lesson = courseLessons[currentIndex];
 
+  if (!lesson) return;
 
-        const lesson =
-            courseLessons[currentIndex];
+  const completed = isLessonCompleted(lesson.id);
 
+  if (completed) {
+    button.className = "btn completed";
 
-        if (!lesson) return;
+    button.innerHTML = '<i class="fa-solid fa-circle-check"></i> Completed';
+  } else {
+    button.className = "btn primary";
 
+    button.innerHTML = '<i class="fa-solid fa-check"></i> Mark as Complete';
+  }
+}
 
-        const completed =
-            isLessonCompleted(lesson.id);
-
-
-        if (completed) {
-
-            button.className =
-                "btn completed";
-
-
-            button.innerHTML =
-                '<i class="fa-solid fa-circle-check"></i> Completed';
-
-
-        } else {
-
-            button.className =
-                "btn primary";
-
-
-            button.innerHTML =
-                '<i class="fa-solid fa-check"></i> Mark as Complete';
-        }
-    }
-
-
-    /* ==========================================
+/* ==========================================
        NAVIGATION
     ========================================== */
 
-    function updateNavigation() {
+function updateNavigation() {
+  const previous = document.getElementById("previousBtn");
 
-        const previous =
-            document.getElementById("previousBtn");
+  const next = document.getElementById("nextBtn");
 
+  previous.disabled = currentIndex <= 0;
 
-        const next =
-            document.getElementById("nextBtn");
+  next.disabled = currentIndex >= courseLessons.length - 1;
 
+  previous.style.opacity = previous.disabled ? ".45" : "1";
 
-        previous.disabled =
-            currentIndex <= 0;
+  next.style.opacity = next.disabled ? ".45" : "1";
+}
 
+function previousLesson() {
+  if (currentIndex <= 0) {
+    showToast("This is the first lesson.");
 
-        next.disabled =
-            currentIndex >=
-            courseLessons.length - 1;
+    return;
+  }
 
+  currentIndex--;
 
-        previous.style.opacity =
-            previous.disabled ? ".45" : "1";
+  loadLesson();
+}
 
+function nextLesson() {
+  if (currentIndex >= courseLessons.length - 1) {
+    showToast("This is the last lesson.");
 
-        next.style.opacity =
-            next.disabled ? ".45" : "1";
-    }
+    return;
+  }
 
-
-    function previousLesson() {
-
-        if (currentIndex <= 0) {
-
-            showToast(
-                "This is the first lesson."
-            );
-
-            return;
-        }
-
-
-        currentIndex--;
-
-        loadLesson();
-    }
-
-
-    function nextLesson() {
-
-        if (
-            currentIndex >=
-            courseLessons.length - 1
-        ) {
-
-            showToast(
-                "This is the last lesson."
-            );
-
-            return;
-        }
-
-
-        /*
+  /*
             Allow next lesson only after
             current lesson is completed.
         */
 
-        const currentLesson =
-            courseLessons[currentIndex];
+  const currentLesson = courseLessons[currentIndex];
 
+  if (!isLessonCompleted(currentLesson.id)) {
+    showToast("Complete this lesson first.");
 
-        if (!isLessonCompleted(
-            currentLesson.id
-        )) {
+    return;
+  }
 
-            showToast(
-                "Complete this lesson first."
-            );
+  currentIndex++;
 
-            return;
-        }
+  loadLesson();
+}
 
-
-        currentIndex++;
-
-        loadLesson();
-    }
-
-
-    /* ==========================================
+/* ==========================================
        BACK
     ========================================== */
 
-    function goBack() {
+function goBack() {
+  window.location.href = "course-details.html?id=" + courseId;
+}
 
-        window.location.href =
-            "course-details.html?id=" +
-            courseId;
-    }
-
-
-    /* ==========================================
+/* ==========================================
        LOGOUT
     ========================================== */
 
-    function logout() {
+function logout() {
+  localStorage.removeItem("loggedInUser");
 
-        localStorage.removeItem(
-            "loggedInUser"
-        );
+  window.location.href = "login.html";
+}
 
-        window.location.href =
-            "login.html";
-    }
-
-
-    /* ==========================================
+/* ==========================================
        TOAST
     ========================================== */
 
-    function showToast(message) {
+function showToast(message) {
+  const toast = document.getElementById("toast");
 
-        const toast =
-            document.getElementById("toast");
+  toast.textContent = message;
 
+  toast.classList.add("show");
 
-        toast.textContent =
-            message;
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
+}
 
-
-        toast.classList.add("show");
-
-
-        setTimeout(() => {
-
-            toast.classList.remove("show");
-
-        }, 2500);
-    }
-
-
-    /* ==========================================
+/* ==========================================
        SECURITY HELPERS
     ========================================== */
 
-    function escapeHTML(value) {
+function escapeHTML(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-        return String(value || "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
+function escapeAttribute(value) {
+  return escapeHTML(value);
+}
 
-
-    function escapeAttribute(value) {
-
-        return escapeHTML(value);
-    }
-
-
-    /* ==========================================
+/* ==========================================
        START
     ========================================== */
 
-    if (
-        loggedInUser &&
-        course &&
-        enrollment
-    ) {
+if (loggedInUser && course && enrollment) {
+  loadLesson();
+}
 
-        loadLesson();
+params = new URLSearchParams(location.search);
+courseId = params.get("course");
+lessonId = params.get("lesson");
+const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+courses = JSON.parse(localStorage.getItem("courses") || "[]");
+lessons = JSON.parse(localStorage.getItem("lessons") || "[]");
+enrollments = JSON.parse(localStorage.getItem("enrollments") || "[]");
+if (!user) {
+  location.href = "login.html";
+}
+course = courses.find((c) => String(c.id) === String(courseId));
+ courseLessons = lessons
+  .filter(
+    (l) => String(l.courseId) === String(courseId) && l.published === true,
+  )
+  .sort((a, b) => Number(a.order) - Number(b.order));
+const lesson = courseLessons.find((l) => String(l.id) === String(lessonId));
+ enrollment = enrollments.find(
+  (e) =>
+    e.userEmail?.toLowerCase() === user.email?.toLowerCase() &&
+    String(e.courseId) === String(courseId),
+);
+if (!course || !lesson) {
+  alert("Course or lesson not found.");
+  location.href = "courses.html";
+}
+if (!lesson.free && !enrollment) {
+  alert("Please enroll in this course to access this lesson.");
+  location.href = `course-details.html?id=${encodeURIComponent(courseId)}`;
+}
+// Display lesson information
+document.getElementById("lessonTitle").textContent = lesson.title;
+document.getElementById("lessonDescription").textContent =
+  lesson.description || "";
+// Convert standard YouTube links to embed URLs
+function getVideoUrl(url) {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : url;
     }
-
+    if (parsed.hostname === "youtu.be") {
+      return `https://www.youtube.com/embed/${parsed.pathname.slice(1)}`;
+    }
+  } catch (error) {
+    return "";
+  }
+  return url;
+}
+const videoFrame = document.getElementById("lessonVideo");
+const videoUrl = getVideoUrl(lesson.video);
+if (videoUrl) {
+  videoFrame.src = videoUrl;
+} else {
+  videoFrame.style.display = "none";
+  document.getElementById("videoMessage").textContent =
+    "No video has been added for this lesson yet.";
+}
+// Save completed lesson and calculate progress
+function completeLesson() {
+  if (!enrollment) {
+    alert("Enroll in the course to track your progress.");
+    return;
+  }
+  const allEnrollments = JSON.parse(
+    localStorage.getItem("enrollments") || "[]",
+  );
+  const current = allEnrollments.find(
+    (e) =>
+      e.userEmail?.toLowerCase() === user.email?.toLowerCase() &&
+      String(e.courseId) === String(courseId),
+  );
+  if (!current) return;
+  const completed = Array.isArray(current.completedLessonIds)
+    ? current.completedLessonIds
+    : [];
+  if (!completed.some((id) => String(id) === String(lesson.id))) {
+    completed.push(lesson.id);
+  }
+  const total = courseLessons.length;
+  const progress = total
+    ? Math.round(
+        (completed.filter((id) =>
+          courseLessons.some((l) => String(l.id) === String(id)),
+        ).length /
+          total) *
+          100,
+      )
+    : 0;
+  current.completedLessonIds = completed;
+  current.completedLessons = completed.length;
+  current.progress = progress;
+  current.lastLessonId = lesson.id;
+  current.lastAccessed = new Date().toISOString();
+  localStorage.setItem("enrollments", JSON.stringify(allEnrollments));
+  document.getElementById("progressText").textContent =
+    `Course progress: ${progress}%`;
+  alert("Lesson marked as completed!");
+}
+document
+  .getElementById("completeBtn")
+  .addEventListener("click", completeLesson);
+// Previous and next lesson navigation
+ currentIndex = courseLessons.findIndex(
+  (l) => String(l.id) === String(lesson.id),
+);
+const previous = courseLessons[currentIndex - 1];
+const next = courseLessons[currentIndex + 1];
+const previousBtn = document.getElementById("previousBtn");
+const nextBtn = document.getElementById("nextBtn");
+previousBtn.disabled = !previous;
+nextBtn.disabled = !next;
+previousBtn.onclick = () => {
+  if (previous) {
+    location.href =
+      `lesson-player.html?course=${encodeURIComponent(courseId)}` +
+      `&lesson=${encodeURIComponent(previous.id)}`;
+  }
+};
+nextBtn.onclick = () => {
+  if (next) {
+    location.href =
+      `lesson-player.html?course=${encodeURIComponent(courseId)}` +
+      `&lesson=${encodeURIComponent(next.id)}`;
+  }
+};

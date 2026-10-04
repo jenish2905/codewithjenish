@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Feedback | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: #fff;
+      min-height: 100vh;
+      padding: 25px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    h1, h2 { color: #00ffff; }
+    a, button { cursor: pointer; }
+    a { color: #00ffff; text-decoration: none; }
+    .container { max-width: 900px; margin: auto; }
+    .card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(0,255,255,.25);
+      border-radius: 15px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 18px rgba(0,255,255,.06);
+    }
+    label { display: block; margin: 15px 0 8px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      background: #10182c;
+      color: white;
+      border: 1px solid #28505d;
+      border-radius: 8px;
+      outline: none;
+    }
+    textarea { resize: vertical; min-height: 110px; }
+    button {
+      background: #00ffff;
+      color: #050816;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    button:hover { background: #7fffff; }
+    .review { border-bottom: 1px solid #25404b; padding: 15px 0; }
+    .review:last-child { border-bottom: none; }
+    .muted { color: #a9b5c7; margin-top: 8px; }
+    .status { color: #ffdb70; font-size: 13px; margin-top: 8px; }
+    .stars { color: #ffd45e; }
+    .message { margin-top: 12px; color: #7dffb0; }
+    @media(max-width: 600px) { body { padding: 15px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Course Feedback</h1>
+      <a href="dashboard.html">← Student Dashboard</a>
+    </header>
+
+    <section class="card">
+      <h2>Write a Review</h2>
+      <p class="muted">Share your experience with a course you are enrolled in.</p>
+
+      <form id="feedbackForm">
+        <label for="course">Select Course</label>
+        <select id="course" required>
+          <option value="">Loading courses...</option>
+        </select>
+
+        <label for="rating">Rating</label>
+        <select id="rating" required>
+          <option value="">Choose a rating</option>
+          <option value="5">★★★★★ — Excellent</option>
+          <option value="4">★★★★☆ — Very Good</option>
+          <option value="3">★★★☆☆ — Good</option>
+          <option value="2">★★☆☆☆ — Fair</option>
+          <option value="1">★☆☆☆☆ — Poor</option>
+        </select>
+
+        <label for="comment">Your Feedback</label>
+        <textarea id="comment" maxlength="1000" placeholder="What did you like or what could be improved?" required></textarea>
+
+        <button type="submit">Submit Feedback</button>
+        <p id="message" class="message" role="status"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>My Feedback</h2>
+      <div id="myFeedback" class="muted">Loading feedback...</div>
+    </section>
+
+    <section class="card">
+      <h2>Published Course Reviews</h2>
+      <div id="publicFeedback" class="muted">Loading reviews...</div>
+    </section>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+
+    if (!user || !user.email) {
+      location.href = "login.html";
+    }
+
+    const email = user.email.toLowerCase();
+    const form = document.getElementById("feedbackForm");
+    const courseSelect = document.getElementById("course");
+    const message = document.getElementById("message");
+
+    function getData(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    function getMyEnrollments() {
+      return getData("enrollments").filter(e =>
+        String(e.userEmail || "").toLowerCase() === email
+      );
+    }
+
+    function loadCourses() {
+      const enrollments = getMyEnrollments();
+      const courses = getData("courses");
+      const available = enrollments.map(e => ({
+        id: String(e.courseId),
+        name: e.courseName || courses.find(c => String(c.id) === String(e.courseId))?.name || "Course"
+      }));
+
+      courseSelect.replaceChildren(new Option("Select a course", ""));
+      const unique = [...new Map(available.map(c => [c.id, c])).values()];
+
+      unique.forEach(course => {
+        courseSelect.add(new Option(course.name, course.id));
+      });
+
+      if (!unique.length) {
+        courseSelect.replaceChildren(new Option("No enrolled courses found", ""));
+      }
+    }
+
+    function renderFeedback() {
+      const all = getData("courseFeedback");
+      const mine = all.filter(f => String(f.userEmail).toLowerCase() === email);
+      const published = all.filter(f =>
+        f.status === "published" &&
+        String(f.userEmail).toLowerCase() !== email
+      );
+
+      const myContainer = document.getElementById("myFeedback");
+      const publicContainer = document.getElementById("publicFeedback");
+
+      myContainer.innerHTML = mine.length ? "" : '<p class="muted">You have not submitted feedback yet.</p>';
+
+      mine.forEach(f => {
+        const item = document.createElement("div");
+        item.className = "review";
+        item.innerHTML = `
+          <strong>${escapeHTML(f.courseName)}</strong>
+          <div class="stars">${"★".repeat(Number(f.rating) || 0)}${"☆".repeat(5 - (Number(f.rating) || 0))}</div>
+          <p>${escapeHTML(f.comment)}</p>
+          <p class="status">Status: ${escapeHTML(f.status || "pending")}</p>
+        `;
+        myContainer.appendChild(item);
+      });
+
+      publicContainer.innerHTML = published.length ? "" : '<p class="muted">No published reviews yet.</p>';
+
+      published.forEach(f => {
+        const item = document.createElement("div");
+        item.className = "review";
+        item.innerHTML = `
+          <strong>${escapeHTML(f.courseName)}</strong>
+          <div class="stars">${"★".repeat(Number(f.rating) || 0)}${"☆".repeat(5 - (Number(f.rating) || 0))}</div>
+          <p>${escapeHTML(f.comment)}</p>
+          <p class="muted">By ${escapeHTML(f.userName || "Student")}</p>
+        `;
+        publicContainer.appendChild(item);
+      });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const courseId = courseSelect.value;
+      const rating = Number(document.getElementById("rating").value);
+      const comment = document.getElementById("comment").value.trim();
+
+      if (!courseId || rating < 1 || rating > 5 || !comment) {
+        message.textContent = "Please complete all fields.";
+        return;
+      }
+
+      const enrollment = getMyEnrollments().find(e => String(e.courseId) === courseId);
+      if (!enrollment) {
+        message.textContent = "You must be enrolled in this course to review it.";
+        return;
+      }
+
+      const courses = getData("courses");
+      const course = courses.find(c => String(c.id) === courseId);
+      const courseName = enrollment.courseName || course?.name || "Course";
+      const feedback = getData("courseFeedback");
+
+      const existing = feedback.find(f =>
+        String(f.userEmail).toLowerCase() === email &&
+        String(f.courseId) === courseId
+      );
+
+      if (existing) {
+        existing.rating = rating;
+        existing.comment = comment;
+        existing.status = "pending";
+        existing.updatedAt = new Date().toISOString();
+      } else {
+        feedback.push({
+          id: Date.now().toString(),
+          userEmail: email,
+          userName: user.name || "Student",
+          courseId,
+          courseName,
+          rating,
+          comment,
+          status: "pending",
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      localStorage.setItem("courseFeedback", JSON.stringify(feedback));
+      form.reset();
+      message.textContent = "Feedback submitted. It will appear publicly after admin approval.";
+      renderFeedback();
+    });
+
+    loadCourses();
+    renderFeedback();
+  </script>
+</body>
+</html>
+

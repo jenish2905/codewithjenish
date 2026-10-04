@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Player | Code With Jenish</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+   <link rel="stylesheet" href="quiz-player.css">
+</head>
+
+<body>
+
+<nav>
+    <a href="dashboard.html" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-code"></i></div>
+        <span>Code With Jenish</span>
+    </a>
+
+    <div class="nav-user">
+        <span id="studentName">Student</span>
+        <button class="logout" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+    </div>
+</nav>
+
+<main class="container">
+
+    <a href="courses.html" class="back">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Courses
+    </a>
+
+    <section class="quiz-header">
+        <h1 id="quizTitle">Loading Quiz...</h1>
+        <p id="quizDescription">Please wait.</p>
+
+        <div class="quiz-meta">
+            <span class="meta-item" id="questionCount">0 Questions</span>
+            <span class="meta-item" id="passingScore">Passing: 50%</span>
+            <span class="meta-item" id="courseName">Course</span>
+        </div>
+    </section>
+
+    <section id="quizArea" class="quiz-layout">
+
+        <div class="question-card">
+            <div class="question-top">
+                <span id="questionPosition">Question 1</span>
+                <span id="answeredCount">0 answered</span>
+            </div>
+
+            <h2 class="question-text" id="questionText"></h2>
+
+            <div class="options" id="options"></div>
+
+            <div class="question-actions">
+                <button class="btn secondary" id="previousBtn" onclick="previousQuestion()">
+                    <i class="fa-solid fa-arrow-left"></i> Previous
+                </button>
+
+                <button class="btn primary" id="nextBtn" onclick="nextQuestion()">
+                    Next <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <aside class="side-card">
+            <h3>Question Navigator</h3>
+
+            <div class="question-grid" id="questionGrid"></div>
+
+            <div class="legend">
+                <span><i class="active-color"></i> Current</span>
+                <span><i class="answered-color"></i> Answered</span>
+                <span><i class="unanswered-color"></i> Not answered</span>
+            </div>
+
+            <button class="btn primary submit-wide" onclick="submitQuiz()">
+                Submit Quiz
+            </button>
+        </aside>
+    </section>
+
+    <section id="resultArea" class="result-card hidden">
+        <div class="result-icon" id="resultIcon">
+            <i class="fa-solid fa-trophy"></i>
+        </div>
+
+        <h2 id="resultTitle">Quiz Result</h2>
+        <div class="score" id="scoreText">0%</div>
+        <p class="result-message" id="resultMessage"></p>
+
+        <div class="result-details">
+            <div class="result-stat">
+                <strong id="correctCount">0</strong>
+                <span>Correct</span>
+            </div>
+            <div class="result-stat">
+                <strong id="wrongCount">0</strong>
+                <span>Incorrect</span>
+            </div>
+            <div class="result-stat">
+                <strong id="totalCount">0</strong>
+                <span>Total</span>
+            </div>
+        </div>
+
+        <button class="btn primary" onclick="goToCourse()">
+            Back to Course
+        </button>
+    </section>
+
+</main>
+
+<script src="quiz-player.js"></script>
+
+</body>
+</html>
+

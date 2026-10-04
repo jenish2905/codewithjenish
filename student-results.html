@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Results | Code With Jenish</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+   
+    <link rel="stylesheet" href="student-results.css">
+</head>
+
+<body>
+
+<nav>
+    <a href="dashboard.html" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-code"></i></div>
+        <span>Code With Jenish</span>
+    </a>
+
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="courses.html"><i class="fa-solid fa-book"></i> Courses</a>
+        <a href="student-results.html" class="active"><i class="fa-solid fa-chart-line"></i> Results</a>
+    </div>
+
+    <div class="user-area">
+        <span id="studentName">Student</span>
+        <button class="logout" onclick="logout()" title="Logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+    </div>
+</nav>
+
+<main class="container">
+
+    <header class="page-heading">
+        <h1>My Quiz Results 📊</h1>
+        <p>Track your quiz scores, review your performance, and monitor your learning progress.</p>
+    </header>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="stat-info">
+                <p>Quizzes Attempted</p>
+                <h2 id="attemptCount">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
+            <div class="stat-info">
+                <p>Average Score</p>
+                <h2 id="averageScore">0%</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="stat-info">
+                <p>Quizzes Passed</p>
+                <h2 id="passedCount">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="stat-info">
+                <p>Highest Score</p>
+                <h2 id="highestScore">0%</h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Quiz History</h2>
+
+            <div class="filters">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search quiz..."
+                    oninput="renderResults()">
+
+                <select id="statusFilter" onchange="renderResults()">
+                    <option value="all">All Results</option>
+                    <option value="passed">Passed</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-wrap" id="tableArea">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Date</th>
+                        <th>Score</th>
+                        <th>Correct</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+        </div>
+
+        <div class="empty hidden" id="emptyState">
+            <i class="fa-solid fa-chart-column"></i>
+            <h3>No quiz results found</h3>
+            <p>Take a quiz to see your results here.</p>
+            <a href="courses.html">Explore Courses</a>
+        </div>
+    </section>
+
+    <section class="performance">
+        <h2>Performance by Quiz</h2>
+        <div class="performance-list" id="performanceList"></div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    © 2026 Code With Jenish. All Rights Reserved.
+</footer>
+
+
+<script src="student-results.js"></script>
+</body>
+</html>
+
