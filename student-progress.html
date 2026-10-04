@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Progress | Code With Jenish</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #050816;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            background: #080d20;
+            border-right: 1px solid rgba(0,255,255,.15);
+            padding: 25px 15px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo h2 {
+            color: #00ffff;
+        }
+
+        .logo span {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 13px;
+            margin: 6px 0;
+            color: #aaa;
+            text-decoration: none;
+            border-radius: 9px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            color: #00ffff;
+            background: rgba(0,255,255,.08);
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .back {
+            display: inline-block;
+            color: #00ffff;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+
+        .avatar {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg,#00ffff,#0066ff);
+            color: #000;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .profile h1 {
+            margin-bottom: 6px;
+        }
+
+        .profile p {
+            color: #888;
+            margin: 4px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 15px;
+            padding: 22px;
+        }
+
+        .card small {
+            color: #888;
+        }
+
+        .card h2 {
+            color: #00ffff;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+        }
+
+        .course {
+            margin-bottom: 22px;
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .course-header span:last-child {
+            color: #00ffff;
+        }
+
+        .bar {
+            height: 9px;
+            background: #202638;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .fill {
+            height: 100%;
+            background: #00ffff;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+        }
+
+        th {
+            color: #00ffff;
+            font-size: 13px;
+        }
+
+        td {
+            color: #ddd;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .passed {
+            color: #00ff88;
+            background: rgba(0,255,100,.1);
+        }
+
+        .failed {
+            color: #ff7777;
+            background: rgba(255,80,80,.1);
+        }
+
+        .activity {
+            border-left: 2px solid #00ffff;
+            padding-left: 18px;
+        }
+
+        .activity-item {
+            margin-bottom: 20px;
+        }
+
+        .activity-item h4 {
+            margin-bottom: 5px;
+        }
+
+        .activity-item p {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .not-found {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .not-found h1 {
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+
+        @media(max-width:900px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+
+        @media(max-width:550px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            table {
+                min-width: 650px;
+            }
+
+            .section {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>Code With Jenish</h2>
+        <span>ADMIN PANEL</span>
+    </div>
+
+    <div class="menu">
+
+        <a href="admin-dashboard.html">
+            📊 Dashboard
+        </a>
+
+        <a href="admin-students.html" class="active">
+            👨‍🎓 Students
+        </a>
+
+        <a href="admin-courses.html">
+            📚 Courses
+        </a>
+
+        <a href="admin-lessons.html">
+            📝 Lessons
+        </a>
+
+        <a href="admin-quizzes.html">
+            🧠 Quizzes
+        </a>
+
+        <a href="admin-certificates.html">
+            🏆 Certificates
+        </a>
+
+        <a href="admin-settings.html">
+            ⚙️ Settings
+        </a>
+
+        <a href="#" onclick="logout()">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <a href="admin-students.html" class="back">
+        ← Back to Students
+    </a>
+
+    <div id="content"></div>
+
+</main>
+
+
+<script>
+
+    /* =========================
+       ADMIN SECURITY
+    ========================= */
+
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+
+        window.location.href = "admin-login.html";
+
+    }
+
+
+    /* =========================
+       GET STUDENT ID
+    ========================= */
+
+    const params = new URLSearchParams(window.location.search);
+
+    const studentId = Number(params.get("id"));
+
+
+    /* =========================
+       STUDENT DATA
+    ========================= */
+
+    const students = JSON.parse(
+        localStorage.getItem("students")
+    ) || [];
+
+
+    const student = students.find(
+        s => s.id === studentId
+    );
+
+
+    /* =========================
+       SHOW STUDENT
+    ========================= */
+
+    if (!student) {
+
+        document.getElementById("content").innerHTML = `
+
+            <div class="not-found">
+
+                <h1>Student Not Found</h1>
+
+                <p>
+                    The selected student could not be found.
+                </p>
+
+            </div>
+
+        `;
+
+    } else {
+
+        const initials = student.name
+            .split(" ")
+            .map(word => word[0])
+            .join("")
+            .substring(0,2)
+            .toUpperCase();
+
+
+        document.getElementById("content").innerHTML = `
+
+            <!-- PROFILE -->
+
+            <div class="profile">
+
+                <div class="avatar">
+                    ${initials}
+                </div>
+
+                <div>
+
+                    <h1>${student.name}</h1>
+
+                    <p>📧 ${student.email}</p>
+
+                    <p>
+                        Status:
+                        <strong>
+                            ${student.status}
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="grid">
+
+                <div class="card">
+                    <small>Overall Progress</small>
+                    <h2>${student.progress}%</h2>
+                </div>
+
+                <div class="card">
+                    <small>Enrolled Courses</small>
+                    <h2>${student.courses}</h2>
+                </div>
+
+                <div class="card">
+                    <small>Completed Lessons</small>
+                    <h2>${student.lessons}</h2>
+                </div>
+
+                <div class="card">
+                    <small>Quiz Average</small>
+                    <h2>${student.quiz}%</h2>
+                </div>
+
+            </div>
+
+
+            <!-- COURSE PROGRESS -->
+
+            <div class="section">
+
+                <h2>📚 Course Progress</h2>
+
+                <div class="course">
+
+                    <div class="course-header">
+                        <span>HTML & CSS</span>
+                        <span>92%</span>
+                    </div>
+
+                    <div class="bar">
+                        <div
+                            class="fill"
+                            style="width:92%">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="course">
+
+                    <div class="course-header">
+                        <span>JavaScript</span>
+                        <span>78%</span>
+                    </div>
+
+                    <div class="bar">
+                        <div
+                            class="fill"
+                            style="width:78%">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="course">
+
+                    <div class="course-header">
+                        <span>Python</span>
+                        <span>65%</span>
+                    </div>
+
+                    <div class="bar">
+                        <div
+                            class="fill"
+                            style="width:65%">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="course">
+
+                    <div class="course-header">
+                        <span>C Programming</span>
+                        <span>54%</span>
+                    </div>
+
+                    <div class="bar">
+                        <div
+                            class="fill"
+                            style="width:54%">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUIZ RESULTS -->
+
+            <div class="section">
+
+                <h2>🧠 Quiz Performance</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Quiz</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>HTML Basics</td>
+                            <td>18 / 20</td>
+                            <td>90%</td>
+                            <td>
+                                <span class="badge passed">
+                                    Passed
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>CSS Fundamentals</td>
+                            <td>16 / 20</td>
+                            <td>80%</td>
+                            <td>
+                                <span class="badge passed">
+                                    Passed
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>JavaScript Basics</td>
+                            <td>14 / 20</td>
+                            <td>70%</td>
+                            <td>
+                                <span class="badge passed">
+                                    Passed
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Python Basics</td>
+                            <td>11 / 20</td>
+                            <td>55%</td>
+                            <td>
+                                <span class="badge passed">
+                                    Passed
+                                </span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- RECENT ACTIVITY -->
+
+            <div class="section">
+
+                <h2>⚡ Recent Activity</h2>
+
+                <div class="activity">
+
+                    <div class="activity-item">
+
+                        <h4>
+                            Completed JavaScript Lesson 12
+                        </h4>
+
+                        <p>
+                            Today • 10:30 AM
+                        </p>
+
+                    </div>
+
+
+                    <div class="activity-item">
+
+                        <h4>
+                            Completed HTML Quiz
+                        </h4>
+
+                        <p>
+                            Yesterday • Score: 90%
+                        </p>
+
+                    </div>
+
+
+                    <div class="activity-item">
+
+                        <h4>
+                            Started Python Course
+                        </h4>
+
+                        <p>
+                            2 days ago
+                        </p>
+
+                    </div>
+
+
+                    <div class="activity-item">
+
+                        <h4>
+                            Logged into Code With Jenish
+                        </h4>
+
+                        <p>
+                            3 days ago
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    function logout() {
+
+        localStorage.removeItem("adminLoggedIn");
+
+        window.location.href =
+            "admin-login.html";
+
+    }
+
+</script>
+
+</body>
+</html>
+

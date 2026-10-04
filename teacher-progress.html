@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Progress | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: #fff;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1, h2, h3 { color: #00ffff; }
+    main { width: 92%; max-width: 1250px; margin: 30px auto; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+    .card, .panel {
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .stat-number {
+      font-size: 30px;
+      font-weight: bold;
+      color: #00ffff;
+      margin: 10px 0 0;
+    }
+    input, select {
+      padding: 11px;
+      margin: 6px 8px 12px 0;
+      border: 1px solid #00ffff55;
+      border-radius: 8px;
+      background: #080d1d;
+      color: white;
+    }
+    input { min-width: 220px; }
+    button, a {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .muted { color: #aab5cb; }
+    .progress {
+      height: 9px;
+      width: 140px;
+      background: #26334e;
+      border-radius: 20px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      background: #00ffff;
+    }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+    th, td {
+      padding: 13px;
+      border-bottom: 1px solid #ffffff22;
+      text-align: left;
+    }
+    th { color: #00ffff; }
+    tr:hover { background: #ffffff08; }
+    .badge {
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #26334e;
+      font-size: 12px;
+    }
+    .pass { color: #54e6a5; }
+    .fail { color: #ff7289; }
+    .details { margin-top: 25px; }
+    .hidden { display: none; }
+    @media(max-width:600px) {
+      main { width: 95%; }
+      .panel, .card { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish | Teacher Panel</h2>
+    <a href="admin-dashboard.html">Admin Dashboard</a>
+  </header>
+
+  <main>
+    <h1>Student Progress Analysis</h1>
+    <p class="muted">Monitor course completion and quiz performance.</p>
+
+    <section class="stats">
+      <div class="card">
+        <p class="muted">Total Students</p>
+        <p class="stat-number" id="totalStudents">0</p>
+      </div>
+      <div class="card">
+        <p class="muted">Total Enrollments</p>
+        <p class="stat-number" id="totalEnrollments">0</p>
+      </div>
+      <div class="card">
+        <p class="muted">Average Progress</p>
+        <p class="stat-number" id="averageProgress">0%</p>
+      </div>
+      <div class="card">
+        <p class="muted">Quiz Attempts</p>
+        <p class="stat-number" id="totalAttempts">0</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Filters</h2>
+      <input id="search" type="search"
+        placeholder="Search student name or email">
+      <select id="courseFilter">
+        <option value="all">All courses</option>
+      </select>
+      <button id="reset">Reset</button>
+    </section>
+
+    <section class="panel" style="margin-top:25px">
+      <h2>Course Progress</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Lessons</th>
+              <th>Progress</th>
+              <th>Last Activity</th>
+            </tr>
+          </thead>
+          <tbody id="progressBody"></tbody>
+        </table>
+      </div>
+      <p id="noProgress" class="muted hidden">No matching records.</p>
+    </section>
+
+    <section class="panel details">
+      <h2>Quiz Performance</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Quiz</th>
+              <th>Course</th>
+              <th>Score</th>
+              <th>Result</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="quizBody"></tbody>
+        </table>
+      </div>
+      <p id="noQuizzes" class="muted hidden">No quiz results found.</p>
+    </section>
+
+    <section class="panel details">
+      <h2>Student Summary</h2>
+      <label for="studentSelect">Select student</label>
+      <select id="studentSelect">
+        <option value="">Select a student</option>
+      </select>
+      <div id="studentSummary" class="muted">
+        Choose a student to see their summary.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      location.href = "admin-login.html";
+    }
+
+    const read = key => JSON.parse(localStorage.getItem(key) || "[]");
+
+    let enrollments = [];
+    let results = [];
+    let lessons = [];
+    let courses = [];
+
+    const $ = id => document.getElementById(id);
+
+    function dateText(value) {
+      if (!value) return "Not available";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime())
+        ? "Not available"
+        : date.toLocaleDateString();
+    }
+
+    function safeText(value) {
+      return String(value ?? "");
+    }
+
+    function getStudentKey(record) {
+      return (record.userEmail || "").trim().toLowerCase();
+    }
+
+    function uniqueStudents() {
+      const map = new Map();
+
+      [...enrollments, ...results].forEach(record => {
+        const email = getStudentKey(record);
+        if (!email) return;
+
+        if (!map.has(email)) {
+          map.set(email, {
+            email,
+            name: record.userName || email
+          });
+        }
+      });
+
+      return [...map.values()];
+    }
+
+    function loadData() {
+      enrollments = read("enrollments");
+      results = read("quizResults");
+      lessons = read("lessons");
+      courses = read("courses");
+    }
+
+    function renderStats() {
+      const students = uniqueStudents();
+
+      const average = enrollments.length
+        ? Math.round(enrollments.reduce(
+            (sum, item) => sum + (Number(item.progress) || 0), 0
+          ) / enrollments.length)
+        : 0;
+
+      $("totalStudents").textContent = students.length;
+      $("totalEnrollments").textContent = enrollments.length;
+      $("averageProgress").textContent = average + "%";
+      $("totalAttempts").textContent = results.length;
+    }
+
+    function loadCourseFilter() {
+      const select = $("courseFilter");
+      select.innerHTML = '<option value="all">All courses</option>';
+
+      courses.forEach(course => {
+        select.add(new Option(course.name, String(course.id)));
+      });
+    }
+
+    function renderProgress() {
+      const query = $("search").value.trim().toLowerCase();
+      const courseId = $("courseFilter").value;
+      const body = $("progressBody");
+      body.innerHTML = "";
+
+      const filtered = enrollments.filter(item => {
+        const student = (item.userName || "").toLowerCase();
+        const email = getStudentKey(item);
+        const matchesSearch = student.includes(query) ||
+          email.includes(query);
+        const matchesCourse = courseId === "all" ||
+          String(item.courseId) === courseId;
+
+        return matchesSearch && matchesCourse;
+      });
+
+      $("noProgress").classList.toggle("hidden", filtered.length > 0);
+
+      filtered.forEach(item => {
+        const courseLessons = lessons.filter(lesson =>
+          String(lesson.courseId) === String(item.courseId) &&
+          lesson.published !== false
+        );
+
+        const completed = Array.isArray(item.completedLessonIds)
+          ? item.completedLessonIds
+          : [];
+
+        const completedCount = completed.filter(id =>
+          courseLessons.some(lesson => String(lesson.id) === String(id))
+        ).length;
+
+        const progress = courseLessons.length
+          ? Math.round(completedCount / courseLessons.length * 100)
+          : Number(item.progress) || 0;
+
+        const row = document.createElement("tr");
+        const studentCell = document.createElement("td");
+        studentCell.textContent =
+          `${item.userName || "Student"} (${item.userEmail || ""})`;
+
+        const courseCell = document.createElement("td");
+        courseCell.textContent = item.courseName ||
+          courses.find(c => String(c.id) === String(item.courseId))?.name ||
+          "Unknown course";
+
+        const lessonCell = document.createElement("td");
+        lessonCell.textContent = courseLessons.length
+          ? `${completedCount}/${courseLessons.length}`
+          : `${item.completedLessons || 0}`;
+
+        const progressCell = document.createElement("td");
+        const bar = document.createElement("div");
+        bar.className = "progress";
+        const fill = document.createElement("span");
+        fill.style.width = Math.max(0, Math.min(100, progress)) + "%";
+        bar.appendChild(fill);
+        const label = document.createElement("span");
+        label.textContent = ` ${progress}%`;
+        progressCell.append(bar, label);
+
+        const activityCell = document.createElement("td");
+        activityCell.textContent = dateText(item.lastAccessed);
+
+        row.append(studentCell, courseCell, lessonCell,
+          progressCell, activityCell);
+        body.appendChild(row);
+      });
+    }
+
+    function renderQuizResults() {
+      const query = $("search").value.trim().toLowerCase();
+      const courseId = $("courseFilter").value;
+      const body = $("quizBody");
+      body.innerHTML = "";
+
+      const filtered = results.filter(result => {
+        const email = getStudentKey(result);
+        const name = (result.userName || "").toLowerCase();
+        const matchesSearch = email.includes(query) || name.includes(query);
+        const matchesCourse = courseId === "all" ||
+          String(result.courseId) === courseId;
+
+        return matchesSearch && matchesCourse;
+      });
+
+      $("noQuizzes").classList.toggle("hidden", filtered.length > 0);
+
+      filtered.forEach(result => {
+        const row = document.createElement("tr");
+
+        const student = document.createElement("td");
+        student.textContent =
+          `${result.userName || "Student"} (${result.userEmail || ""})`;
+
+        const quiz = document.createElement("td");
+        quiz.textContent = result.quizTitle || "Quiz";
+
+        const course = document.createElement("td");
+        course.textContent = result.courseName || "Course";
+
+        const score = document.createElement("td");
+        score.textContent = `${Number(result.score) || 0}%`;
+
+        const status = document.createElement("td");
+        const passed = result.passed === true;
+        status.textContent = passed ? "Passed" : "Not passed";
+        status.className = passed ? "pass" : "fail";
+
+        const date = document.createElement("td");
+        date.textContent = dateText(result.submittedAt);
+
+        row.append(student, quiz, course, score, status, date);
+        body.appendChild(row);
+      });
+    }
+
+    function loadStudentSelect() {
+      const select = $("studentSelect");
+      select.innerHTML = '<option value="">Select a student</option>';
+
+      uniqueStudents().forEach(student => {
+        const option = new Option(
+          `${student.name} — ${student.email}`,
+          student.email
+        );
+        select.add(option);
+      });
+    }
+
+    function renderStudentSummary() {
+      const email = $("studentSelect").value;
+      const output = $("studentSummary");
+      output.innerHTML = "";
+
+      if (!email) {
+        output.textContent = "Choose a student to see their summary.";
+        return;
+      }
+
+      const studentEnrollments = enrollments.filter(e =>
+        getStudentKey(e) === email
+      );
+      const studentResults = results.filter(r =>
+        getStudentKey(r) === email
+      );
+
+      const average = studentResults.length
+        ? Math.round(studentResults.reduce(
+            (sum, r) => sum + (Number(r.score) || 0), 0
+          ) / studentResults.length)
+        : 0;
+
+      const heading = document.createElement("h3");
+      heading.textContent = uniqueStudents().find(s =>
+        s.email === email)?.name || email;
+
+      const enrollmentInfo = document.createElement("p");
+      enrollmentInfo.textContent =
+        `Enrolled courses: ${studentEnrollments.length}`;
+
+      const resultInfo = document.createElement("p");
+      resultInfo.textContent =
+        `Quiz attempts: ${studentResults.length}`;
+
+      const averageInfo = document.createElement("p");
+      averageInfo.textContent = `Average quiz score: ${average}%`;
+
+      output.append(heading, enrollmentInfo, resultInfo, averageInfo);
+
+      const list = document.createElement("ul");
+      studentEnrollments.forEach(enrollment => {
+        const li = document.createElement("li");
+        li.textContent =
+          `${enrollment.courseName || "Course"} — ` +
+          `${Number(enrollment.progress) || 0}% progress`;
+        list.appendChild(li);
+      });
+      output.appendChild(list);
+    }
+
+    function renderAll() {
+      loadData();
+      renderStats();
+      renderProgress();
+      renderQuizResults();
+      loadStudentSelect();
+      renderStudentSummary();
+    }
+
+    $("search").addEventListener("input", () => {
+      renderProgress();
+      renderQuizResults();
+    });
+
+    $("courseFilter").addEventListener("change", () => {
+      renderProgress();
+      renderQuizResults();
+    });
+
+    $("studentSelect").addEventListener("change", renderStudentSummary);
+
+    $("reset").addEventListener("click", () => {
+      $("search").value = "";
+      $("courseFilter").value = "all";
+      renderProgress();
+      renderQuizResults();
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
+

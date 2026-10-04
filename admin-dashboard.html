@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Dashboard | Code With Jenish</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+
+        background: #050816;
+
+        color: white;
+
+        min-height: 100vh;
+      }
+
+      :root {
+        --primary: #00e5ff;
+        --blue: #3b82f6;
+        --purple: #8b5cf6;
+        --red: #ef4444;
+        --green: #22c55e;
+        --bg: #050816;
+        --sidebar: #080c1c;
+        --card: rgba(255, 255, 255, 0.05);
+        --border: rgba(255, 255, 255, 0.1);
+        --muted: #9ca3af;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* =========================
+           SIDEBAR
+        ========================= */
+
+      .sidebar {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: 250px;
+
+        height: 100vh;
+
+        background: var(--sidebar);
+
+        border-right: 1px solid var(--border);
+
+        padding: 25px 18px;
+
+        z-index: 1000;
+      }
+
+      .logo {
+        font-size: 21px;
+
+        font-weight: 800;
+
+        margin-bottom: 45px;
+
+        padding-left: 10px;
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      .admin-badge {
+        display: inline-block;
+
+        padding: 5px 9px;
+
+        margin-left: 7px;
+
+        border-radius: 5px;
+
+        background: rgba(239, 68, 68, 0.12);
+
+        color: #f87171;
+
+        font-size: 9px;
+
+        text-transform: uppercase;
+      }
+
+      .menu-title {
+        color: #6b7280;
+
+        font-size: 10px;
+
+        text-transform: uppercase;
+
+        letter-spacing: 1.5px;
+
+        margin: 20px 10px 10px;
+      }
+
+      .menu a {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+
+        padding: 13px 14px;
+
+        margin-bottom: 5px;
+
+        border-radius: 10px;
+
+        color: #9ca3af;
+
+        font-size: 13px;
+
+        transition: 0.3s;
+      }
+
+      .menu a i {
+        width: 20px;
+
+        text-align: center;
+      }
+
+      .menu a:hover,
+      .menu a.active {
+        color: white;
+
+        background: rgba(0, 229, 255, 0.08);
+      }
+
+      .menu a.active {
+        color: var(--primary);
+
+        border-left: 3px solid var(--primary);
+      }
+
+      .logout {
+        color: #f87171 !important;
+      }
+
+      /* =========================
+           MAIN
+        ========================= */
+
+      .main {
+        margin-left: 250px;
+
+        padding: 25px 35px;
+      }
+
+      /* =========================
+           TOPBAR
+        ========================= */
+
+      .topbar {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 30px;
+      }
+
+      .topbar h1 {
+        font-size: 25px;
+      }
+
+      .topbar p {
+        color: var(--muted);
+
+        font-size: 12px;
+
+        margin-top: 5px;
+      }
+
+      .admin-profile {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+      }
+
+      .avatar {
+        width: 42px;
+
+        height: 42px;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: linear-gradient(135deg, var(--primary), var(--purple));
+
+        color: #020617;
+
+        font-weight: 800;
+      }
+
+      .admin-name {
+        font-size: 13px;
+
+        font-weight: 600;
+      }
+
+      .admin-role {
+        font-size: 10px;
+
+        color: var(--muted);
+      }
+
+      /* =========================
+           STATS
+        ========================= */
+
+      .stats {
+        display: grid;
+
+        grid-template-columns: repeat(4, 1fr);
+
+        gap: 18px;
+
+        margin-bottom: 25px;
+      }
+
+      .stat-card {
+        padding: 22px;
+
+        border-radius: 15px;
+
+        background: var(--card);
+
+        border: 1px solid var(--border);
+      }
+
+      .stat-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+      }
+
+      .stat-card h2 {
+        font-size: 27px;
+
+        margin-bottom: 5px;
+      }
+
+      .stat-card p {
+        color: var(--muted);
+
+        font-size: 11px;
+      }
+
+      .stat-icon {
+        width: 43px;
+
+        height: 43px;
+
+        border-radius: 11px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        color: var(--primary);
+
+        background: rgba(0, 229, 255, 0.1);
+      }
+
+      /* =========================
+           GRID
+        ========================= */
+
+      .grid {
+        display: grid;
+
+        grid-template-columns: 2fr 1fr;
+
+        gap: 22px;
+      }
+
+      .card {
+        background: var(--card);
+
+        border: 1px solid var(--border);
+
+        border-radius: 17px;
+
+        padding: 23px;
+
+        margin-bottom: 22px;
+      }
+
+      .card-header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 20px;
+      }
+
+      .card-header h3 {
+        font-size: 16px;
+      }
+
+      .view {
+        color: var(--primary);
+
+        font-size: 11px;
+      }
+
+      /* =========================
+           TABLE
+        ========================= */
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        min-width: 600px;
+      }
+
+      th {
+        text-align: left;
+
+        color: #6b7280;
+
+        font-size: 10px;
+
+        text-transform: uppercase;
+
+        padding: 12px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      td {
+        padding: 14px 12px;
+
+        font-size: 12px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      .student {
+        display: flex;
+
+        align-items: center;
+
+        gap: 9px;
+      }
+
+      .student-avatar {
+        width: 32px;
+
+        height: 32px;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: rgba(0, 229, 255, 0.1);
+
+        color: var(--primary);
+
+        font-weight: 700;
+
+        font-size: 11px;
+      }
+
+      .student-email {
+        color: var(--muted);
+
+        font-size: 9px;
+      }
+
+      .status {
+        padding: 5px 8px;
+
+        border-radius: 6px;
+
+        font-size: 9px;
+      }
+
+      .active-status {
+        color: #4ade80;
+
+        background: rgba(34, 197, 94, 0.1);
+      }
+
+      .progress-small {
+        width: 80px;
+
+        height: 6px;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .progress-small div {
+        height: 100%;
+
+        background: linear-gradient(90deg, var(--primary), var(--blue));
+      }
+
+      /* =========================
+           QUICK ACTIONS
+        ========================= */
+
+      .actions {
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 12px;
+      }
+
+      .action {
+        padding: 18px;
+
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.03);
+
+        border: 1px solid var(--border);
+
+        transition: 0.3s;
+      }
+
+      .action:hover {
+        border-color: rgba(0, 229, 255, 0.3);
+
+        transform: translateY(-2px);
+      }
+
+      .action i {
+        color: var(--primary);
+
+        font-size: 20px;
+
+        margin-bottom: 12px;
+      }
+
+      .action h4 {
+        font-size: 12px;
+
+        margin-bottom: 4px;
+      }
+
+      .action p {
+        color: var(--muted);
+
+        font-size: 9px;
+      }
+
+      /* =========================
+           COURSE STATS
+        ========================= */
+
+      .course-stat {
+        margin-bottom: 18px;
+      }
+
+      .course-stat:last-child {
+        margin-bottom: 0;
+      }
+
+      .course-stat-top {
+        display: flex;
+
+        justify-content: space-between;
+
+        font-size: 11px;
+
+        margin-bottom: 7px;
+      }
+
+      .course-stat-top span:last-child {
+        color: var(--primary);
+      }
+
+      .bar {
+        height: 7px;
+
+        background: rgba(255, 255, 255, 0.08);
+
+        border-radius: 20px;
+
+        overflow: hidden;
+      }
+
+      .bar div {
+        height: 100%;
+
+        background: linear-gradient(90deg, var(--primary), var(--purple));
+      }
+
+      /* =========================
+           MOBILE
+        ========================= */
+
+      .mobile-menu {
+        display: none;
+
+        background: none;
+
+        border: none;
+
+        color: white;
+
+        font-size: 22px;
+
+        cursor: pointer;
+      }
+
+      @media (max-width: 1100px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 800px) {
+        .sidebar {
+          transform: translateX(-100%);
+
+          transition: 0.3s;
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+        }
+
+        .main {
+          margin-left: 0;
+
+          padding: 20px;
+        }
+
+        .mobile-menu {
+          display: block;
+
+          margin-bottom: 10px;
+        }
+      }
+
+      @media (max-width: 550px) {
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-profile div:not(.avatar) {
+          display: none;
+        }
+
+        .actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =========================
+     SIDEBAR
+========================= -->
+
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        <span>&lt;/&gt;</span>
+
+        Code With Jenish
+
+        <span class="admin-badge"> Admin </span>
+      </div>
+
+      <div class="menu-title">Management</div>
+
+      <nav class="menu">
+        <a href="#" class="active">
+          <i class="fa-solid fa-chart-pie"></i>
+
+          Dashboard
+        </a>
+
+        <a href="admin-students.html">
+          <i class="fa-solid fa-users"></i>
+
+          Students
+        </a>
+
+        <a href="admin-courses.html">
+          <i class="fa-solid fa-book"></i>
+
+          Courses
+        </a>
+
+        <a href="admin-lessons.html">
+          <i class="fa-solid fa-video"></i>
+
+          Lessons
+        </a>
+
+        <a href="admin-quizzes.html">
+          <i class="fa-solid fa-clipboard-question"></i>
+
+          Quizzes
+        </a>
+
+        <a href="#certificates">
+          <i class="fa-solid fa-certificate"></i>
+
+          Certificates
+        </a>
+        <a href="admin-announcements.html"> Manage Announcements</a>
+        <a href="teacher-progress.html">Teacher Progress Analysis</a>
+        <a href="admin-support.html">Manage Support Requests</a>
+        <a href="admin-enrollments.html">Manage Enrollments</a>
+        <a href="admin-feedback.html">Manage Feedback</a>
+        <div class="menu-title">System</div>
+
+        <a href="admin-settings.html">
+          <i class="fa-solid fa-gear"></i>
+
+          Settings
+        </a>
+
+        <a href="#" class="logout" id="logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+
+          Logout
+        </a>
+      </nav>
+    </aside>
+
+    <!-- =========================
+     MAIN
+========================= -->
+
+    <main class="main">
+      <!-- TOPBAR -->
+
+      <div class="topbar">
+        <div>
+          <button class="mobile-menu" id="mobileMenu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <h1>Admin Dashboard</h1>
+
+          <p>Manage your Code With Jenish platform.</p>
+        </div>
+
+        <div class="admin-profile">
+          <div>
+            <div class="admin-name">Administrator</div>
+
+            <div class="admin-role">Platform Admin</div>
+          </div>
+
+          <div class="avatar">A</div>
+        </div>
+      </div>
+
+      <!-- =========================
+         STATS
+    ========================= -->
+
+      <section class="stats">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h2 id="studentCount">0</h2>
+
+              <p>Total Students</p>
+            </div>
+
+            <div class="stat-icon">
+              <i class="fa-solid fa-users"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h2>6</h2>
+
+              <p>Total Courses</p>
+            </div>
+
+            <div class="stat-icon">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h2>156</h2>
+
+              <p>Total Lessons</p>
+            </div>
+
+            <div class="stat-icon">
+              <i class="fa-solid fa-video"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <h2>87%</h2>
+
+              <p>Avg. Completion</p>
+            </div>
+
+            <div class="stat-icon">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================
+         GRID
+    ========================= -->
+
+      <div class="grid">
+        <!-- LEFT -->
+
+        <div>
+          <!-- STUDENTS -->
+
+          <div class="card" id="students">
+            <div class="card-header">
+              <h3>Recent Students</h3>
+
+              <a href="#" class="view"> View All </a>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student</th>
+
+                    <th>Course</th>
+
+                    <th>Progress</th>
+
+                    <th>Status</th>
+                  </tr>
+                </thead>
+
+                <tbody id="studentTable">
+                  <tr>
+                    <td>
+                      <div class="student">
+                        <div class="student-avatar">JS</div>
+
+                        <div>
+                          <div>Demo Student</div>
+
+                          <div class="student-email">student@example.com</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>C Programming</td>
+
+                    <td>
+                      <div class="progress-small">
+                        <div style="width: 65%"></div>
+                      </div>
+
+                      <small> 65% </small>
+                    </td>
+
+                    <td>
+                      <span class="status active-status"> Active </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- COURSE PERFORMANCE -->
+
+          <div class="card" id="courses">
+            <div class="card-header">
+              <h3>Course Performance</h3>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> C Programming </span>
+
+                <span> 78% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 78%"></div>
+              </div>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> Python </span>
+
+                <span> 64% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 64%"></div>
+              </div>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> JavaScript </span>
+
+                <span> 71% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 71%"></div>
+              </div>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> Web Development </span>
+
+                <span> 58% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 58%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+
+        <div>
+          <!-- QUICK ACTIONS -->
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Quick Actions</h3>
+            </div>
+
+            <div class="actions">
+              <a href="admin-courses.html" class="action">
+                <i class="fa-solid fa-plus"></i>
+
+                <h4>Add Course</h4>
+
+                <p>Create a new course</p>
+              </a>
+
+              <a href="admin-lessons.html" class="action">
+                <i class="fa-solid fa-video"></i>
+
+                <h4>Add Lesson</h4>
+
+                <p>Create new lesson</p>
+              </a>
+
+              <a href="admin-quizzes.html" class="action">
+                <i class="fa-solid fa-question"></i>
+
+                <h4>Create Quiz</h4>
+
+                <p>Add quiz questions</p>
+              </a>
+
+              <a href="admin-students.html" class="action">
+                <i class="fa-solid fa-user-plus"></i>
+
+                <h4>Students</h4>
+
+                <p>Manage students</p>
+              </a>
+            </div>
+          </div>
+
+          <!-- SYSTEM -->
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Platform Overview</h3>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> Course Completion </span>
+
+                <span> 72% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 72%"></div>
+              </div>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> Quiz Participation </span>
+
+                <span> 84% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 84%"></div>
+              </div>
+            </div>
+
+            <div class="course-stat">
+              <div class="course-stat-top">
+                <span> Certificate Completion </span>
+
+                <span> 46% </span>
+              </div>
+
+              <div class="bar">
+                <div style="width: 46%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      /* =========================
+   ADMIN AUTH PROTECTION
+========================= */
+
+      const adminLoggedIn = localStorage.getItem("adminLoggedIn");
+
+      if (adminLoggedIn !== "true") {
+        window.location.href = "admin-login.html";
+      }
+
+      /* =========================
+   COUNT REGISTERED USERS
+========================= */
+
+      const user = localStorage.getItem("codeWithJenishUser");
+
+      if (user) {
+        document.getElementById("studentCount").textContent = "1";
+      }
+
+      /* =========================
+   MOBILE SIDEBAR
+========================= */
+
+      const mobileMenu = document.getElementById("mobileMenu");
+
+      const sidebar = document.getElementById("sidebar");
+
+      mobileMenu.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+      });
+
+      /* =========================
+   LOGOUT
+========================= */
+
+      document.getElementById("logout").addEventListener("click", function (e) {
+        e.preventDefault();
+
+        localStorage.removeItem("adminLoggedIn");
+
+        window.location.href = "admin-login.html";
+      });
+    </script>
+  </body>
+</html>

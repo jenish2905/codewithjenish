@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Enrollments | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: white;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    main { width: 92%; max-width: 1150px; margin: 30px auto; }
+    h1, h2 { color: #00ffff; }
+    .panel, .request {
+      padding: 20px;
+      margin: 16px 0;
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+    }
+    .request { background: #080d1d; }
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      margin: 8px 0 15px;
+      background: #050816;
+      color: white;
+      border: 1px solid #00ffff55;
+      border-radius: 8px;
+    }
+    button, a {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      margin: 4px;
+    }
+    button.reject { background: #ff4d6d; color: white; }
+    button.revoke { background: #26334e; color: white; }
+    .muted { color: #aab5cb; }
+    .status { color: #00ffff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish — Enrollment Admin</h2>
+    <a href="admin-dashboard.html">Dashboard</a>
+  </header>
+
+  <main>
+    <h1>Enrollment Management</h1>
+
+    <section class="panel">
+      <label for="search">Search student or course</label>
+      <input id="search" type="search"
+        placeholder="Search by name, email, or course">
+
+      <label for="statusFilter">Filter by status</label>
+      <select id="statusFilter">
+        <option value="all">All requests</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+
+      <p id="count" class="muted"></p>
+    </section>
+
+    <section>
+      <h2>Enrollment Requests</h2>
+      <div id="requestList"></div>
+    </section>
+
+    <section>
+      <h2>Active Enrollments</h2>
+      <div id="activeList"></div>
+    </section>
+  </main>
+
+  <script>
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      location.href = "admin-login.html";
+    }
+
+    const read = key =>
+      JSON.parse(localStorage.getItem(key) || "[]");
+
+    const write = (key, data) =>
+      localStorage.setItem(key, JSON.stringify(data));
+
+    const search = document.getElementById("search");
+    const statusFilter = document.getElementById("statusFilter");
+
+    function approveRequest(id) {
+      const requests = read("enrollmentRequests");
+      const enrollments = read("enrollments");
+      const request = requests.find(r =>
+        String(r.id) === String(id)
+      );
+
+      if (!request || request.status !== "pending") return;
+
+      const course = read("courses").find(c =>
+        String(c.id) === String(request.courseId)
+      );
+
+      if (!course || course.status !== "published") {
+        alert("This course is not currently published.");
+        return;
+      }
+
+      const existing = enrollments.find(e =>
+        e.userEmail?.toLowerCase() ===
+          request.userEmail.toLowerCase() &&
+        String(e.courseId) === String(request.courseId)
+      );
+
+      if (!existing) {
+        enrollments.push({
+          id: Date.now().toString(),
+          userEmail: request.userEmail,
+          userName: request.userName,
+          courseId: request.courseId,
+          courseName: request.courseName,
+          enrolledAt: new Date().toISOString(),
+          progress: 0,
+          completedLessons: 0,
+          completedLessonIds: [],
+          lastLessonId: null,
+          lastAccessed: null
+        });
+        write("enrollments", enrollments);
+      }
+
+      request.status = "approved";
+      request.updatedAt = new Date().toISOString();
+      request.adminNote =
+        document.getElementById("note-" + id)?.value.trim() || "";
+
+      write("enrollmentRequests", requests);
+      renderAll();
+      alert("Enrollment approved.");
+    }
+
+    function rejectRequest(id) {
+      const requests = read("enrollmentRequests");
+      const request = requests.find(r =>
+        String(r.id) === String(id)
+      );
+
+      if (!request || request.status !== "pending") return;
+
+      request.status = "rejected";
+      request.updatedAt = new Date().toISOString();
+      request.adminNote =
+        document.getElementById("note-" + id)?.value.trim() || "";
+
+      write("enrollmentRequests", requests);
+      renderAll();
+      alert("Enrollment request rejected.");
+    }
+
+    function revokeEnrollment(id) {
+      if (!confirm(
+        "Revoke this student's course access? Their progress record will be removed."
+      )) return;
+
+      const enrollments = read("enrollments").filter(e =>
+        String(e.id) !== String(id)
+      );
+
+      write("enrollments", enrollments);
+      renderAll();
+    }
+
+    function renderRequests() {
+      const list = document.getElementById("requestList");
+      list.innerHTML = "";
+
+      const query = search.value.trim().toLowerCase();
+      const status = statusFilter.value;
+
+      const requests = read("enrollmentRequests")
+        .filter(r => {
+          const matchesText =
+            (r.userName || "").toLowerCase().includes(query) ||
+            (r.userEmail || "").toLowerCase().includes(query) ||
+            (r.courseName || "").toLowerCase().includes(query);
+
+          const matchesStatus =
+            status === "all" || r.status === status;
+
+          return matchesText && matchesStatus;
+        })
+        .sort((a, b) =>
+          new Date(b.requestedAt) - new Date(a.requestedAt)
+        );
+
+      document.getElementById("count").textContent =
+        `${requests.length} matching request(s)`;
+
+      if (!requests.length) {
+        list.textContent = "No requests found.";
+        return;
+      }
+
+      requests.forEach(request => {
+        const card = document.createElement("div");
+        card.className = "request";
+
+        const title = document.createElement("h3");
+        title.textContent = request.courseName;
+
+        const student = document.createElement("p");
+        student.textContent =
+          `${request.userName} — ${request.userEmail}`;
+
+        const state = document.createElement("p");
+        state.className = "status";
+        state.textContent =
+          "Status: " + request.status.toUpperCase();
+
+        const date = document.createElement("p");
+        date.className = "muted";
+        date.textContent =
+          "Requested: " + new Date(request.requestedAt).toLocaleString();
+
+        const note = document.createElement("textarea");
+        note.id = "note-" + request.id;
+        note.rows = 2;
+        note.maxLength = 500;
+        note.placeholder = "Optional note for the student";
+        note.value = request.adminNote || "";
+
+        card.append(title, student, state, date);
+
+        if (request.status === "pending") {
+          const approve = document.createElement("button");
+          approve.textContent = "Approve";
+          approve.onclick = () => approveRequest(request.id);
+
+          const reject = document.createElement("button");
+          reject.className = "reject";
+          reject.textContent = "Reject";
+          reject.onclick = () => rejectRequest(request.id);
+
+          card.append(note, approve, reject);
+        } else {
+          const previousNote = document.createElement("p");
+          previousNote.className = "muted";
+          previousNote.textContent =
+            request.adminNote
+              ? "Admin note: " + request.adminNote
+              : "No admin note";
+          card.appendChild(previousNote);
+        }
+
+        list.appendChild(card);
+      });
+    }
+
+    function renderActiveEnrollments() {
+      const list = document.getElementById("activeList");
+      list.innerHTML = "";
+
+      const query = search.value.trim().toLowerCase();
+
+      const enrollments = read("enrollments").filter(e =>
+        (e.userName || "").toLowerCase().includes(query) ||
+        (e.userEmail || "").toLowerCase().includes(query) ||
+        (e.courseName || "").toLowerCase().includes(query)
+      );
+
+      if (!enrollments.length) {
+        list.textContent = "No active enrollments found.";
+        return;
+      }
+
+      enrollments.forEach(enrollment => {
+        const card = document.createElement("div");
+        card.className = "request";
+
+        const title = document.createElement("h3");
+        title.textContent = enrollment.courseName || "Course";
+
+        const student = document.createElement("p");
+        student.textContent =
+          `${enrollment.userName || "Student"} — ${enrollment.userEmail}`;
+
+        const progress = document.createElement("p");
+        progress.textContent =
+          `Progress: ${Number(enrollment.progress) || 0}%`;
+
+        const revoke = document.createElement("button");
+        revoke.className = "revoke";
+        revoke.textContent = "Revoke Access";
+        revoke.onclick = () => revokeEnrollment(enrollment.id);
+
+        card.append(title, student, progress, revoke);
+        list.appendChild(card);
+      });
+    }
+
+    function renderAll() {
+      renderRequests();
+      renderActiveEnrollments();
+    }
+
+    search.addEventListener("input", renderAll);
+    statusFilter.addEventListener("change", renderRequests);
+
+    renderAll();
+  </script>
+</body>
+</html>
+

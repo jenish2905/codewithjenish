@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Students | Code With Jenish Admin</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #050816;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+
+        .sidebar {
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            background: #080d20;
+            border-right: 1px solid rgba(0,255,255,0.15);
+            padding: 25px 15px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo h2 {
+            color: #00ffff;
+        }
+
+        .logo span {
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: #aaa;
+            padding: 14px;
+            margin: 7px 0;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: rgba(0,255,255,0.1);
+            color: #00ffff;
+            box-shadow: 0 0 15px rgba(0,255,255,0.08);
+        }
+
+        /* ===== MAIN ===== */
+
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 30px;
+        }
+
+        .topbar p {
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .admin {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 15px;
+            border-radius: 10px;
+            color: #00ffff;
+        }
+
+        /* ===== SEARCH ===== */
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,255,255,0.2);
+            background: #080d20;
+            color: white;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #00ffff;
+        }
+
+        .filter {
+            width: 180px;
+        }
+
+        /* ===== TABLE ===== */
+
+        .table-container {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 15px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            padding: 17px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        th {
+            color: #00ffff;
+            font-size: 13px;
+        }
+
+        td {
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(0,255,255,0.03);
+        }
+
+        .student {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#00ffff,#0066ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* ===== PROGRESS ===== */
+
+        .progress-box {
+            width: 120px;
+        }
+
+        .progress-bar {
+            height: 7px;
+            background: #202638;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00ffff;
+            border-radius: 20px;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* ===== STATUS ===== */
+
+        .status {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        .active-status {
+            background: rgba(0,255,100,0.1);
+            color: #00ff88;
+        }
+
+        .inactive-status {
+            background: rgba(255,80,80,0.1);
+            color: #ff7070;
+        }
+
+        /* ===== BUTTON ===== */
+
+        .view-btn {
+            border: 1px solid #00ffff;
+            background: transparent;
+            color: #00ffff;
+            padding: 8px 13px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .view-btn:hover {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0,255,255,0.3);
+        }
+
+        /* ===== EMPTY ===== */
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            display: none;
+        }
+
+        /* ===== MOBILE ===== */
+
+        @media(max-width: 800px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(0,255,255,0.15);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .menu {
+                display: grid;
+                grid-template-columns: repeat(2,1fr);
+                gap: 5px;
+            }
+
+            .menu a {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>Code With Jenish</h2>
+        <span>ADMIN PANEL</span>
+    </div>
+
+    <div class="menu">
+
+        <a href="admin-dashboard.html">
+            📊 Dashboard
+        </a>
+
+        <a href="admin-students.html" class="active">
+            👨‍🎓 Students
+        </a>
+
+        <a href="admin-courses.html">
+            📚 Courses
+        </a>
+
+        <a href="admin-lessons.html">
+            📝 Lessons
+        </a>
+
+        <a href="admin-quizzes.html">
+            🧠 Quizzes
+        </a>
+
+        <a href="admin-certificates.html">
+            🏆 Certificates
+        </a>
+
+        <a href="admin-settings.html">
+            ⚙️ Settings
+        </a>
+
+        <a href="#" onclick="logout()">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- ===== MAIN ===== -->
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div>
+            <h1>Students</h1>
+            <p>Manage and analyze student learning progress.</p>
+        </div>
+
+        <div class="admin">
+            👨‍💼 Admin
+        </div>
+
+    </div>
+
+
+    <!-- ===== SEARCH / FILTER ===== -->
+
+    <div class="controls">
+
+        <div class="search">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Search student by name or email..."
+                onkeyup="filterStudents()"
+            >
+        </div>
+
+        <div class="filter">
+            <select id="statusFilter" onchange="filterStudents()">
+                <option value="all">All Students</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+
+    </div>
+
+
+    <!-- ===== STUDENT TABLE ===== -->
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Student</th>
+                    <th>Email</th>
+                    <th>Courses</th>
+                    <th>Lessons</th>
+                    <th>Quiz Avg.</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="studentTable">
+
+            </tbody>
+
+        </table>
+
+        <div class="empty" id="emptyMessage">
+            No students found.
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    /* ===== ADMIN SECURITY ===== */
+
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+        window.location.href = "admin-login.html";
+    }
+
+
+    /* ===== DEMO STUDENT DATA ===== */
+
+    let students = JSON.parse(localStorage.getItem("students")) || [
+
+        {
+            id: 1,
+            name: "Rahul Patel",
+            email: "rahul@gmail.com",
+            courses: 4,
+            lessons: 28,
+            quiz: 86,
+            progress: 78,
+            status: "active"
+        },
+
+        {
+            id: 2,
+            name: "Priya Shah",
+            email: "priya@gmail.com",
+            courses: 3,
+            lessons: 22,
+            quiz: 92,
+            progress: 91,
+            status: "active"
+        },
+
+        {
+            id: 3,
+            name: "Amit Kumar",
+            email: "amit@gmail.com",
+            courses: 2,
+            lessons: 15,
+            quiz: 74,
+            progress: 54,
+            status: "active"
+        },
+
+        {
+            id: 4,
+            name: "Neha Patel",
+            email: "neha@gmail.com",
+            courses: 3,
+            lessons: 19,
+            quiz: 81,
+            progress: 68,
+            status: "inactive"
+        },
+
+        {
+            id: 5,
+            name: "Jay Mehta",
+            email: "jay@gmail.com",
+            courses: 5,
+            lessons: 35,
+            quiz: 95,
+            progress: 97,
+            status: "active"
+        }
+
+    ];
+
+
+    /* Save demo data */
+
+    if (!localStorage.getItem("students")) {
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+    }
+
+
+    /* ===== DISPLAY STUDENTS ===== */
+
+    function displayStudents(data = students) {
+
+        const table = document.getElementById("studentTable");
+        const empty = document.getElementById("emptyMessage");
+
+        table.innerHTML = "";
+
+        if (data.length === 0) {
+
+            empty.style.display = "block";
+            return;
+
+        }
+
+        empty.style.display = "none";
+
+
+        data.forEach(student => {
+
+            const initials = student.name
+                .split(" ")
+                .map(word => word[0])
+                .join("")
+                .substring(0,2)
+                .toUpperCase();
+
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+
+                <td>
+
+                    <div class="student">
+
+                        <div class="avatar">
+                            ${initials}
+                        </div>
+
+                        <strong>
+                            ${student.name}
+                        </strong>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+                    ${student.email}
+                </td>
+
+
+                <td>
+                    ${student.courses}
+                </td>
+
+
+                <td>
+                    ${student.lessons}
+                </td>
+
+
+                <td>
+                    ${student.quiz}%
+                </td>
+
+
+                <td>
+
+                    <div class="progress-box">
+
+                        <div class="progress-bar">
+
+                            <div
+                                class="progress-fill"
+                                style="width:${student.progress}%">
+                            </div>
+
+                        </div>
+
+                        <div class="progress-text">
+                            ${student.progress}% completed
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <span class="status ${
+                        student.status === "active"
+                        ? "active-status"
+                        : "inactive-status"
+                    }">
+
+                        ${
+                            student.status === "active"
+                            ? "● Active"
+                            : "● Inactive"
+                        }
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        class="view-btn"
+                        onclick="viewProgress(${student.id})">
+
+                        View Progress
+
+                    </button>
+
+                </td>
+
+            `;
+
+            table.appendChild(row);
+
+        });
+
+    }
+
+
+    /* ===== SEARCH + FILTER ===== */
+
+    function filterStudents() {
+
+        const search =
+            document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+        const status =
+            document
+            .getElementById("statusFilter")
+            .value;
+
+
+        const filtered = students.filter(student => {
+
+            const matchesSearch =
+                student.name
+                .toLowerCase()
+                .includes(search)
+                ||
+                student.email
+                .toLowerCase()
+                .includes(search);
+
+
+            const matchesStatus =
+                status === "all"
+                ||
+                student.status === status;
+
+
+            return matchesSearch && matchesStatus;
+
+        });
+
+
+        displayStudents(filtered);
+
+    }
+
+
+    /* ===== VIEW STUDENT PROGRESS ===== */
+
+    function viewProgress(id) {
+
+        window.location.href =
+            "student-progress.html?id=" + id;
+
+    }
+
+
+    /* ===== LOGOUT ===== */
+
+    function logout() {
+
+        localStorage.removeItem("adminLoggedIn");
+
+        window.location.href =
+            "admin-login.html";
+
+    }
+
+
+    /* ===== INITIAL LOAD ===== */
+
+    displayStudents();
+
+</script>
+
+</body>
+</html>
+

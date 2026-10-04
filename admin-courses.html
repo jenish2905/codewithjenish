@@ -1,0 +1,381 @@
+<!-- admin-courses.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Courses | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+    body { background: #050816; color: #fff; padding: 25px; }
+    :root { --cyan: #00ffff; --panel: #10182d; --muted: #aab4c8; }
+    .container { max-width: 1200px; margin: auto; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 28px; }
+    h1 { color: var(--cyan); font-size: 27px; }
+    a { color: var(--cyan); text-decoration: none; }
+    .panel { background: rgba(255,255,255,.04); border: 1px solid rgba(0,255,255,.2); border-radius: 14px; padding: 22px; margin-bottom: 25px; }
+    h2 { font-size: 20px; margin-bottom: 18px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 7px; }
+    input, textarea, select { width: 100%; padding: 12px; border: 1px solid #33415d; border-radius: 8px; background: #080d20; color: white; outline: none; }
+    input:focus, textarea:focus, select:focus { border-color: var(--cyan); }
+    textarea { min-height: 90px; resize: vertical; }
+    .full { grid-column: 1 / -1; }
+    .check-row { display: flex; align-items: center; gap: 9px; color: var(--muted); }
+    .check-row input { width: auto; }
+    button { border: 1px solid var(--cyan); border-radius: 8px; padding: 10px 15px; background: transparent; color: var(--cyan); font-weight: 700; cursor: pointer; }
+    button:hover { background: var(--cyan); color: #050816; }
+    .primary { background: var(--cyan); color: #050816; }
+    .danger { border-color: #ff7777; color: #ff9292; }
+    .danger:hover { background: #ff7777; color: #050816; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .toolbar { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 750px; }
+    th, td { padding: 14px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 13px; }
+    th { color: var(--cyan); }
+    td { color: #dce4f4; }
+    .status { display: inline-block; padding: 5px 9px; border-radius: 20px; font-size: 11px; }
+    .published { background: rgba(0,220,140,.12); color: #64e6ad; }
+    .draft { background: rgba(255,190,60,.12); color: #ffd477; }
+    .empty { color: var(--muted); text-align: center; padding: 25px; }
+    @media(max-width:700px) {
+      body { padding: 15px; }
+      .form-grid, .toolbar { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📚 Manage Courses</h1>
+    <a href="admin-dashboard.html">← Admin Dashboard</a>
+  </header>
+
+  <section class="panel">
+    <h2 id="formTitle">Add New Course</h2>
+    <form id="courseForm">
+      <input type="hidden" id="courseId">
+
+      <div class="form-grid">
+        <div>
+          <label for="name">Course Name *</label>
+          <input id="name" required maxlength="100" placeholder="e.g. C Programming">
+        </div>
+
+        <div>
+          <label for="category">Category *</label>
+          <select id="category" required>
+            <option value="">Select category</option>
+            <option>Programming</option>
+            <option>Web Development</option>
+            <option>Database</option>
+            <option>AI</option>
+            <option>Design</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="description">Description *</label>
+          <textarea id="description" required maxlength="1000" placeholder="Describe what students will learn"></textarea>
+        </div>
+
+        <div>
+          <label for="price">Price (₹)</label>
+          <input id="price" type="number" min="0" step="1" value="0">
+        </div>
+
+        <div>
+          <label for="icon">Course Icon (emoji)</label>
+          <input id="icon" maxlength="8" value="📘" placeholder="💻">
+        </div>
+
+        <div>
+          <label for="image">Course Image URL (optional)</label>
+          <input id="image" type="url" placeholder="https://example.com/course.jpg">
+        </div>
+
+        <div>
+          <label for="status">Visibility</label>
+          <select id="status">
+            <option value="draft">Save as Draft</option>
+            <option value="published">Publish Course</option>
+          </select>
+        </div>
+
+        <div class="full actions">
+          <button type="submit" class="primary" id="saveBtn">Save Course</button>
+          <button type="button" id="cancelBtn" style="display:none;">Cancel Edit</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>All Courses</h2>
+
+    <div class="toolbar">
+      <input id="search" placeholder="Search courses...">
+      <select id="categoryFilter">
+        <option value="all">All categories</option>
+      </select>
+      <select id="statusFilter">
+        <option value="all">All statuses</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="courseTable"></tbody>
+      </table>
+    </div>
+    <div id="empty" class="empty" style="display:none;">No courses found.</div>
+  </section>
+</div>
+
+<script>
+  // Admin access check
+  if (localStorage.getItem("adminLoggedIn") !== "true") {
+    window.location.href = "admin-login.html";
+  }
+
+  const STORAGE_KEY = "courses";
+
+  const defaultCourses = [
+    { id: 1, name: "C Programming", description: "Learn C programming from fundamentals to advanced concepts.", category: "Programming", price: 499, lessons: 35, students: 124, status: "published", icon: "💻", image: "" },
+    { id: 2, name: "HTML & CSS", description: "Build modern responsive websites using HTML and CSS.", category: "Web Development", price: 399, lessons: 28, students: 186, status: "published", icon: "🌐", image: "" },
+    { id: 3, name: "JavaScript", description: "Master JavaScript and build interactive web applications.", category: "Web Development", price: 699, lessons: 42, students: 153, status: "published", icon: "⚡", image: "" },
+    { id: 4, name: "Python Programming", description: "Learn Python programming, projects and problem solving.", category: "Programming", price: 599, lessons: 40, students: 98, status: "published", icon: "🐍", image: "" },
+    { id: 5, name: "MySQL Database", description: "Learn SQL, database design and MySQL.", category: "Database", price: 449, lessons: 25, students: 72, status: "draft", icon: "🗄️", image: "" },
+    { id: 6, name: "Artificial Intelligence", description: "Introduction to AI concepts, tools and applications.", category: "AI", price: 799, lessons: 45, students: 61, status: "draft", icon: "🤖", image: "" }
+  ];
+
+  function loadCourses() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === null) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultCourses));
+        return [...defaultCourses];
+      }
+      const data = JSON.parse(saved);
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
+  }
+
+  let courses = loadCourses();
+
+  function saveCourses() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
+    })[ch]);
+  }
+
+  const form = document.getElementById("courseForm");
+
+  function resetForm() {
+    form.reset();
+    document.getElementById("courseId").value = "";
+    document.getElementById("icon").value = "📘";
+    document.getElementById("price").value = "0";
+    document.getElementById("status").value = "draft";
+    document.getElementById("formTitle").textContent = "Add New Course";
+    document.getElementById("saveBtn").textContent = "Save Course";
+    document.getElementById("cancelBtn").style.display = "none";
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const idValue = document.getElementById("courseId").value;
+    const name = document.getElementById("name").value.trim();
+    const category = document.getElementById("category").value;
+    const description = document.getElementById("description").value.trim();
+    const price = Number(document.getElementById("price").value);
+    const icon = document.getElementById("icon").value.trim() || "📘";
+    const image = document.getElementById("image").value.trim();
+    const status = document.getElementById("status").value;
+
+    if (!name || !category || !description || !Number.isFinite(price) || price < 0) {
+      alert("Please enter valid course information.");
+      return;
+    }
+
+    if (image) {
+      try {
+        const parsed = new URL(image);
+        if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
+      } catch {
+        alert("Please enter a valid HTTP or HTTPS image URL.");
+        return;
+      }
+    }
+
+    if (idValue) {
+      const index = courses.findIndex(course => String(course.id) === idValue);
+      if (index === -1) {
+        alert("Course not found.");
+        return;
+      }
+
+      courses[index] = {
+        ...courses[index],
+        name, category, description, price, icon, image, status
+      };
+    } else {
+      courses.push({
+        id: Date.now(),
+        name, category, description, price, icon, image, status,
+        lessons: 0,
+        students: 0
+      });
+    }
+
+    saveCourses();
+    resetForm();
+    renderCourses();
+    alert("Course saved successfully.");
+  });
+
+  function editCourse(id) {
+    const course = courses.find(item => String(item.id) === String(id));
+    if (!course) return;
+
+    document.getElementById("courseId").value = course.id;
+    document.getElementById("name").value = course.name || "";
+    document.getElementById("category").value = course.category || "";
+    document.getElementById("description").value = course.description || "";
+    document.getElementById("price").value = course.price ?? 0;
+    document.getElementById("icon").value = course.icon || "📘";
+    document.getElementById("image").value = course.image || "";
+    document.getElementById("status").value = course.status || "draft";
+
+    document.getElementById("formTitle").textContent = "Edit Course";
+    document.getElementById("saveBtn").textContent = "Update Course";
+    document.getElementById("cancelBtn").style.display = "inline-block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function togglePublish(id) {
+    const course = courses.find(item => String(item.id) === String(id));
+    if (!course) return;
+
+    course.status = course.status === "published" ? "draft" : "published";
+    saveCourses();
+    renderCourses();
+  }
+
+  function deleteCourse(id) {
+    const course = courses.find(item => String(item.id) === String(id));
+    if (!course) return;
+
+    if (!confirm(`Delete "${course.name}"? This will not automatically delete its lessons or student enrollment records.`)) return;
+
+    courses = courses.filter(item => String(item.id) !== String(id));
+    saveCourses();
+    renderCourses();
+  }
+
+  function populateCategoryFilter() {
+    const select = document.getElementById("categoryFilter");
+    const selected = select.value;
+    const categories = [...new Set(courses.map(course => course.category).filter(Boolean))].sort();
+
+    select.innerHTML = '<option value="all">All categories</option>' +
+      categories.map(category =>
+        `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`
+      ).join("");
+
+    if (categories.includes(selected)) select.value = selected;
+  }
+
+  function renderCourses() {
+    populateCategoryFilter();
+
+    const query = document.getElementById("search").value.toLowerCase().trim();
+    const category = document.getElementById("categoryFilter").value;
+    const status = document.getElementById("statusFilter").value;
+
+    const filtered = courses.filter(course => {
+      const matchesSearch =
+        String(course.name || "").toLowerCase().includes(query) ||
+        String(course.description || "").toLowerCase().includes(query);
+
+      return matchesSearch &&
+        (category === "all" || course.category === category) &&
+        (status === "all" || course.status === status);
+    });
+
+    const tbody = document.getElementById("courseTable");
+    document.getElementById("empty").style.display = filtered.length ? "none" : "block";
+
+    tbody.innerHTML = filtered.map(course => `
+      <tr>
+        <td>${escapeHTML(course.icon || "📘")} ${escapeHTML(course.name)}</td>
+        <td>${escapeHTML(course.category || "—")}</td>
+        <td>₹${Number(course.price || 0).toLocaleString("en-IN")}</td>
+        <td><span class="status ${course.status === "published" ? "published" : "draft"}">
+          ${course.status === "published" ? "Published" : "Draft"}
+        </span></td>
+        <td>
+          <div class="actions">
+            <button data-action="edit" data-id="${escapeHTML(course.id)}">Edit</button>
+            <button data-action="toggle" data-id="${escapeHTML(course.id)}">
+              ${course.status === "published" ? "Unpublish" : "Publish"}
+            </button>
+            <button class="danger" data-action="delete" data-id="${escapeHTML(course.id)}">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  document.getElementById("courseTable").addEventListener("click", event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const id = button.dataset.id;
+    const action = button.dataset.action;
+
+    if (action === "edit") editCourse(id);
+    if (action === "toggle") togglePublish(id);
+    if (action === "delete") deleteCourse(id);
+  });
+
+  document.getElementById("cancelBtn").addEventListener("click", resetForm);
+  document.getElementById("search").addEventListener("input", renderCourses);
+  document.getElementById("categoryFilter").addEventListener("change", renderCourses);
+  document.getElementById("statusFilter").addEventListener("change", renderCourses);
+
+  // Keep the admin list updated if another tab changes course data.
+  window.addEventListener("storage", event => {
+    if (event.key === STORAGE_KEY) {
+      courses = loadCourses();
+      renderCourses();
+    }
+  });
+
+  renderCourses();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Lessons | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: #fff;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    h1, h2 { color: #00ffff; }
+    main { width: 90%; max-width: 1100px; margin: 30px auto; }
+    .panel {
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 25px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 15px;
+      border: 1px solid #00ffff55;
+      border-radius: 8px;
+      background: #080d1d;
+      color: white;
+    }
+    button, .link {
+      display: inline-block;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      margin: 4px;
+    }
+    button.secondary { background: #26334e; color: white; }
+    button.danger { background: #ff4d6d; color: white; }
+    .lesson {
+      padding: 16px;
+      background: #080d1d;
+      border: 1px solid #ffffff22;
+      border-radius: 10px;
+      margin: 12px 0;
+    }
+    .muted { color: #aab5cb; }
+    .actions { margin-top: 12px; }
+    @media (max-width: 600px) {
+      main { width: 94%; }
+      .panel { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish — Lessons</h2>
+    <a class="link" href="admin-dashboard.html">Admin Dashboard</a>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2 id="formTitle">Add New Lesson</h2>
+      <form id="lessonForm">
+        <label for="course">Select Course</label>
+        <select id="course" required></select>
+
+        <label for="title">Lesson Title</label>
+        <input id="title" required placeholder="e.g. Introduction to C">
+
+        <label for="description">Description</label>
+        <textarea id="description" rows="3"
+          placeholder="Lesson description"></textarea>
+
+        <label for="video">Video URL</label>
+        <input id="video" type="url"
+          placeholder="YouTube or video URL">
+
+        <label for="duration">Duration</label>
+        <input id="duration" placeholder="e.g. 15 minutes">
+
+        <label for="order">Lesson Number</label>
+        <input id="order" type="number" min="1" value="1" required>
+
+        <label>
+          <input id="free" type="checkbox" style="width:auto">
+          Free preview
+        </label>
+        <br><br>
+
+        <label>
+          <input id="published" type="checkbox" checked style="width:auto">
+          Published
+        </label>
+        <br><br>
+
+        <button type="submit" id="saveBtn">Save Lesson</button>
+        <button type="button" class="secondary" id="cancelBtn"
+          style="display:none">Cancel Edit</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Manage Lessons</h2>
+      <label for="filterCourse">Filter by course</label>
+      <select id="filterCourse">
+        <option value="all">All courses</option>
+      </select>
+      <div id="lessonList"></div>
+    </section>
+  </main>
+
+  <script>
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      location.href = "admin-login.html";
+    }
+
+    const getData = key => JSON.parse(localStorage.getItem(key) || "[]");
+    const saveData = (key, data) =>
+      localStorage.setItem(key, JSON.stringify(data));
+
+    let courses = getData("courses");
+    let lessons = getData("lessons");
+    let editingId = null;
+
+    const form = document.getElementById("lessonForm");
+    const courseInput = document.getElementById("course");
+    const titleInput = document.getElementById("title");
+    const descriptionInput = document.getElementById("description");
+    const videoInput = document.getElementById("video");
+    const durationInput = document.getElementById("duration");
+    const orderInput = document.getElementById("order");
+    const freeInput = document.getElementById("free");
+    const publishedInput = document.getElementById("published");
+    const list = document.getElementById("lessonList");
+    const filter = document.getElementById("filterCourse");
+
+    function renderCourses() {
+      courses = getData("courses");
+      courseInput.innerHTML = "";
+      filter.innerHTML = '<option value="all">All courses</option>';
+
+      courses.forEach(course => {
+        const option = new Option(course.name, course.id);
+        courseInput.add(option);
+        filter.add(new Option(course.name, course.id));
+      });
+    }
+
+    function resetForm() {
+      form.reset();
+      editingId = null;
+      document.getElementById("formTitle").textContent = "Add New Lesson";
+      document.getElementById("saveBtn").textContent = "Save Lesson";
+      document.getElementById("cancelBtn").style.display = "none";
+      orderInput.value = 1;
+    }
+
+    function renderLessons() {
+      lessons = getData("lessons");
+      const selected = filter.value;
+      const visible = lessons
+        .filter(item => selected === "all" ||
+          String(item.courseId) === selected)
+        .sort((a, b) => Number(a.order) - Number(b.order));
+
+      list.innerHTML = "";
+
+      if (!visible.length) {
+        list.innerHTML = '<p class="muted">No lessons found.</p>';
+        return;
+      }
+
+      visible.forEach(lesson => {
+        const course = courses.find(c =>
+          String(c.id) === String(lesson.courseId));
+        const card = document.createElement("div");
+        card.className = "lesson";
+
+        const heading = document.createElement("h3");
+        heading.textContent = `${lesson.order}. ${lesson.title}`;
+
+        const info = document.createElement("p");
+        info.className = "muted";
+        info.textContent =
+          `${course?.name || "Unknown course"} • ` +
+          `${lesson.duration || "Duration not set"} • ` +
+          `${lesson.published ? "Published" : "Draft"} • ` +
+          `${lesson.free ? "Free preview" : "Enrolled students"}`;
+
+        const desc = document.createElement("p");
+        desc.textContent = lesson.description || "";
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => editLesson(lesson.id);
+
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "secondary";
+        toggleBtn.textContent = lesson.published ? "Unpublish" : "Publish";
+        toggleBtn.onclick = () => toggleLesson(lesson.id);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "danger";
+        deleteBtn.textContent = "Delete";
+        deleteBtn.onclick = () => deleteLesson(lesson.id);
+
+        actions.append(editBtn, toggleBtn, deleteBtn);
+        card.append(heading, info, desc, actions);
+        list.appendChild(card);
+      });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const courseId = courseInput.value;
+      if (!courseId) {
+        alert("Please add a course first.");
+        return;
+      }
+
+      const lessonData = {
+        id: editingId || Date.now().toString(),
+        courseId,
+        title: titleInput.value.trim(),
+        description: descriptionInput.value.trim(),
+        video: videoInput.value.trim(),
+        duration: durationInput.value.trim(),
+        order: Number(orderInput.value),
+        free: freeInput.checked,
+        published: publishedInput.checked,
+        locked: !freeInput.checked
+      };
+
+      if (editingId) {
+        lessons = lessons.map(item =>
+          String(item.id) === String(editingId) ? lessonData : item);
+      } else {
+        lessons.push(lessonData);
+      }
+
+      saveData("lessons", lessons);
+      resetForm();
+      renderLessons();
+      alert("Lesson saved successfully!");
+    });
+
+    function editLesson(id) {
+      const lesson = lessons.find(item => String(item.id) === String(id));
+      if (!lesson) return;
+
+      editingId = lesson.id;
+      courseInput.value = lesson.courseId;
+      titleInput.value = lesson.title;
+      descriptionInput.value = lesson.description || "";
+      videoInput.value = lesson.video || "";
+      durationInput.value = lesson.duration || "";
+      orderInput.value = lesson.order || 1;
+      freeInput.checked = Boolean(lesson.free);
+      publishedInput.checked = Boolean(lesson.published);
+
+      document.getElementById("formTitle").textContent = "Edit Lesson";
+      document.getElementById("saveBtn").textContent = "Update Lesson";
+      document.getElementById("cancelBtn").style.display = "inline-block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleLesson(id) {
+      lessons = getData("lessons").map(item =>
+        String(item.id) === String(id)
+          ? { ...item, published: !item.published }
+          : item);
+      saveData("lessons", lessons);
+      renderLessons();
+    }
+
+    function deleteLesson(id) {
+      if (!confirm("Delete this lesson? Student progress may be affected.")) {
+        return;
+      }
+      lessons = getData("lessons").filter(item =>
+        String(item.id) !== String(id));
+      saveData("lessons", lessons);
+      renderLessons();
+    }
+
+    filter.addEventListener("change", renderLessons);
+    document.getElementById("cancelBtn").addEventListener("click", resetForm);
+
+    renderCourses();
+    renderLessons();
+  </script>
+</body>
+</html>
+

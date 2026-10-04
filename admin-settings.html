@@ -1,0 +1,2491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Settings | Code With Jenish</title>
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #050816;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: rgba(8, 13, 32, 0.95);
+            border-right: 1px solid rgba(0, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 20px 15px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 25px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(0, 255, 255, 0.08);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            color: #00ffff;
+            box-shadow: 0 0 18px rgba(0, 255, 255, 0.15);
+            font-size: 20px;
+        }
+
+        .logo h2 {
+            color: #ffffff;
+            font-size: 19px;
+        }
+
+        .logo span {
+            color: #00ffff;
+        }
+
+        .menu-title {
+            color: #667085;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 20px 10px 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            text-decoration: none;
+            color: #aab2c5;
+            padding: 12px 14px;
+            margin: 5px 0;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+            background: rgba(0, 255, 255, 0.07);
+            transform: translateX(3px);
+        }
+
+        .nav-link.active {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.09);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.06);
+        }
+
+        .logout {
+            margin-top: 20px;
+            color: #ff6b81;
+        }
+
+        .logout:hover {
+            background: rgba(255, 107, 129, 0.08);
+            color: #ff8295;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+            padding: 25px 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .page-title p {
+            color: #7e879d;
+            font-size: 14px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 13px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+        }
+
+        .admin-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #00ffff, #008cff);
+            color: #050816;
+            font-weight: bold;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .admin-info span {
+            color: #778198;
+            font-size: 11px;
+        }
+
+        /* =========================
+           SETTINGS LAYOUT
+        ========================= */
+
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 230px 1fr;
+            gap: 20px;
+        }
+
+        .settings-menu {
+            background: rgba(8, 13, 32, 0.75);
+            border: 1px solid rgba(0, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 12px;
+            height: fit-content;
+            backdrop-filter: blur(15px);
+        }
+
+        .settings-tab {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #9ba5bb;
+            padding: 13px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+            margin-bottom: 5px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .settings-tab i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .settings-tab:hover {
+            background: rgba(0, 255, 255, 0.06);
+            color: #ffffff;
+        }
+
+        .settings-tab.active {
+            background: rgba(0, 255, 255, 0.09);
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .settings-content {
+            min-width: 0;
+        }
+
+        .settings-section {
+            display: none;
+            background: rgba(8, 13, 32, 0.75);
+            border: 1px solid rgba(0, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+        }
+
+        .settings-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-heading {
+            padding-bottom: 18px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .section-heading h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .section-heading p {
+            color: #7e879d;
+            font-size: 13px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c4cada;
+            font-size: 13px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 13px;
+            background: rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 9px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.08);
+        }
+
+        select option {
+            background: #080d20;
+            color: white;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6f7a92;
+            cursor: pointer;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .button-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 17px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #00ffff;
+            color: #041016;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 18px rgba(0, 255, 255, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #d7dceb;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(255, 82, 105, 0.1);
+            color: #ff7184;
+            border: 1px solid rgba(255, 82, 105, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 82, 105, 0.17);
+        }
+
+        /* =========================
+           TOGGLE
+        ========================= */
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            color: #737d94;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .switch {
+            position: relative;
+            width: 48px;
+            height: 25px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #20283c;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 19px;
+            height: 19px;
+            left: 3px;
+            top: 3px;
+            background: #8d96a9;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .switch input:checked + .slider {
+            background: rgba(0, 255, 255, 0.3);
+        }
+
+        .switch input:checked + .slider::before {
+            transform: translateX(23px);
+            background: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* =========================
+           ADMIN PROFILE
+        ========================= */
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px;
+            background: rgba(0, 255, 255, 0.035);
+            border: 1px solid rgba(0, 255, 255, 0.08);
+            border-radius: 13px;
+            margin-bottom: 25px;
+        }
+
+        .large-avatar {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #00ffff, #008cff);
+            color: #041016;
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .profile-header h3 {
+            margin-bottom: 5px;
+        }
+
+        .profile-header p {
+            color: #758098;
+            font-size: 13px;
+        }
+
+        /* =========================
+           DANGER ZONE
+        ========================= */
+
+        .danger-zone {
+            margin-top: 25px;
+            border: 1px solid rgba(255, 72, 98, 0.2);
+            background: rgba(255, 72, 98, 0.025);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .danger-zone h3 {
+            color: #ff7184;
+            margin-bottom: 7px;
+            font-size: 15px;
+        }
+
+        .danger-zone p {
+            color: #7f879b;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            min-width: 280px;
+            padding: 14px 17px;
+            border-radius: 11px;
+            background: #0b1328;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i {
+            color: #00ffff;
+        }
+
+        .toast.error {
+            border-color: rgba(255, 82, 105, 0.3);
+        }
+
+        .toast.error i {
+            color: #ff7184;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        .mobile-header {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            .menu-btn {
+                width: 42px;
+                height: 42px;
+                border: 1px solid rgba(0, 255, 255, 0.2);
+                border-radius: 10px;
+                background: rgba(0, 255, 255, 0.06);
+                color: #00ffff;
+                cursor: pointer;
+                font-size: 18px;
+            }
+
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-menu {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+            }
+
+            .settings-tab {
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .admin-profile {
+                display: none;
+            }
+
+            .page-title h1 {
+                font-size: 23px;
+            }
+
+            .settings-section {
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .settings-menu {
+                grid-template-columns: 1fr;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            .button-row .btn {
+                width: 100%;
+            }
+
+            .setting-row {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-code"></i>
+            </div>
+
+            <h2>Code With <span>Jenish</span></h2>
+        </div>
+
+        <div class="menu-title">Main</div>
+
+        <a href="admin-dashboard.html" class="nav-link">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="admin-students.html" class="nav-link">
+            <i class="fa-solid fa-users"></i>
+            <span>Students</span>
+        </a>
+
+        <a href="admin-courses.html" class="nav-link">
+            <i class="fa-solid fa-book"></i>
+            <span>Courses</span>
+        </a>
+
+        <a href="admin-lessons.html" class="nav-link">
+            <i class="fa-solid fa-play-circle"></i>
+            <span>Lessons</span>
+        </a>
+
+        <a href="admin-quizzes.html" class="nav-link">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>Quizzes</span>
+        </a>
+
+        <div class="menu-title">Management</div>
+
+        <a href="admin-certificates.html" class="nav-link">
+            <i class="fa-solid fa-certificate"></i>
+            <span>Certificates</span>
+        </a>
+
+        <a href="admin-settings.html" class="nav-link active">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+        <a href="#" class="nav-link logout" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="main">
+
+        <!-- Mobile Header -->
+
+        <div class="mobile-header">
+
+            <button class="menu-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <strong>Code With Jenish</strong>
+
+        </div>
+
+
+        <!-- Topbar -->
+
+        <div class="topbar">
+
+            <div class="page-title">
+                <h1>Admin Settings</h1>
+                <p>Manage your e-learning platform settings.</p>
+            </div>
+
+            <div class="admin-profile">
+
+                <div class="admin-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="admin-info">
+                    <strong id="topAdminName">Administrator</strong>
+                    <span>Super Admin</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Settings Layout -->
+
+        <div class="settings-layout">
+
+            <!-- Settings Menu -->
+
+            <div class="settings-menu">
+
+                <button
+                    class="settings-tab active"
+                    onclick="openTab('profile', this)"
+                >
+                    <i class="fa-solid fa-user"></i>
+                    Profile
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="openTab('platform', this)"
+                >
+                    <i class="fa-solid fa-sliders"></i>
+                    Platform
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="openTab('security', this)"
+                >
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Security
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="openTab('notifications', this)"
+                >
+                    <i class="fa-solid fa-bell"></i>
+                    Notifications
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="openTab('appearance', this)"
+                >
+                    <i class="fa-solid fa-palette"></i>
+                    Appearance
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="openTab('data', this)"
+                >
+                    <i class="fa-solid fa-database"></i>
+                    Data
+                </button>
+
+            </div>
+
+
+            <!-- Settings Content -->
+
+            <div class="settings-content">
+
+
+                <!-- =========================
+                     PROFILE
+                ========================= -->
+
+                <section class="settings-section active" id="profile">
+
+                    <div class="section-heading">
+                        <h2>Admin Profile</h2>
+                        <p>Manage your administrator account information.</p>
+                    </div>
+
+                    <div class="profile-header">
+
+                        <div class="large-avatar" id="profileAvatar">
+                            A
+                        </div>
+
+                        <div>
+                            <h3 id="profileDisplayName">Administrator</h3>
+                            <p id="profileDisplayEmail">
+                                admin@codewithjenish.com
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>Admin Name</label>
+
+                            <input
+                                type="text"
+                                id="adminName"
+                                placeholder="Enter admin name"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Email Address</label>
+
+                            <input
+                                type="email"
+                                id="adminEmail"
+                                placeholder="Enter email address"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Phone Number</label>
+
+                            <input
+                                type="tel"
+                                id="adminPhone"
+                                placeholder="Enter phone number"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Role</label>
+
+                            <select id="adminRole">
+
+                                <option value="Super Admin">
+                                    Super Admin
+                                </option>
+
+                                <option value="Admin">
+                                    Admin
+                                </option>
+
+                                <option value="Content Manager">
+                                    Content Manager
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <div class="button-row">
+
+                        <button class="btn btn-secondary" onclick="resetProfile()">
+                            Reset
+                        </button>
+
+                        <button class="btn btn-primary" onclick="saveProfile()">
+                            <i class="fa-solid fa-save"></i>
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     PLATFORM
+                ========================= -->
+
+                <section class="settings-section" id="platform">
+
+                    <div class="section-heading">
+                        <h2>Platform Settings</h2>
+                        <p>Configure your Code With Jenish e-learning platform.</p>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>Platform Name</label>
+
+                            <input
+                                type="text"
+                                id="platformName"
+                                value="Code With Jenish"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Website URL</label>
+
+                            <input
+                                type="url"
+                                id="websiteUrl"
+                                placeholder="https://example.com"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Default Language</label>
+
+                            <select id="language">
+
+                                <option value="English">
+                                    English
+                                </option>
+
+                                <option value="Gujarati">
+                                    Gujarati
+                                </option>
+
+                                <option value="Hindi">
+                                    Hindi
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Currency</label>
+
+                            <select id="currency">
+
+                                <option value="INR">
+                                    INR - Indian Rupee
+                                </option>
+
+                                <option value="USD">
+                                    USD - US Dollar
+                                </option>
+
+                                <option value="EUR">
+                                    EUR - Euro
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label>Platform Description</label>
+
+                            <textarea id="platformDescription">Code With Jenish is an e-learning platform for learning programming, web development, databases, AI and modern technology.</textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Allow Student Registration</h3>
+
+                            <p>
+                                Allow new students to create accounts.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="allowRegistration"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Course Enrollment</h3>
+
+                            <p>
+                                Allow students to enroll in available courses.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="allowEnrollment"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="button-row">
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="savePlatform()"
+                        >
+                            <i class="fa-solid fa-save"></i>
+                            Save Platform Settings
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     SECURITY
+                ========================= -->
+
+                <section class="settings-section" id="security">
+
+                    <div class="section-heading">
+                        <h2>Security Settings</h2>
+                        <p>Manage administrator password and security preferences.</p>
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <div class="form-group full">
+
+                            <label>Current Password</label>
+
+                            <div class="input-icon">
+
+                                <input
+                                    type="password"
+                                    id="currentPassword"
+                                    placeholder="Enter current password"
+                                >
+
+                                <i
+                                    class="fa-solid fa-eye"
+                                    onclick="togglePassword('currentPassword', this)"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>New Password</label>
+
+                            <div class="input-icon">
+
+                                <input
+                                    type="password"
+                                    id="newPassword"
+                                    placeholder="Enter new password"
+                                >
+
+                                <i
+                                    class="fa-solid fa-eye"
+                                    onclick="togglePassword('newPassword', this)"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Confirm New Password</label>
+
+                            <div class="input-icon">
+
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    placeholder="Confirm new password"
+                                >
+
+                                <i
+                                    class="fa-solid fa-eye"
+                                    onclick="togglePassword('confirmPassword', this)"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Login Activity Alerts</h3>
+
+                            <p>
+                                Receive alerts when a new administrator login occurs.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="loginAlerts"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Session Protection</h3>
+
+                            <p>
+                                Keep administrator sessions protected from unauthorized access.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="sessionProtection"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="button-row">
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="changePassword()"
+                        >
+                            <i class="fa-solid fa-lock"></i>
+                            Update Password
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     NOTIFICATIONS
+                ========================= -->
+
+                <section class="settings-section" id="notifications">
+
+                    <div class="section-heading">
+                        <h2>Notifications</h2>
+                        <p>Choose which platform notifications you want to receive.</p>
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>New Student Registration</h3>
+
+                            <p>
+                                Notify admin when a new student creates an account.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="newStudentNotification"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Course Enrollment</h3>
+
+                            <p>
+                                Receive notifications when students enroll in courses.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="courseEnrollmentNotification"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Quiz Completion</h3>
+
+                            <p>
+                                Receive alerts when students complete quizzes.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="quizNotification"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Course Completion</h3>
+
+                            <p>
+                                Receive notifications when students complete courses.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="completionNotification"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="button-row">
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="saveNotifications()"
+                        >
+                            <i class="fa-solid fa-save"></i>
+                            Save Notifications
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     APPEARANCE
+                ========================= -->
+
+                <section class="settings-section" id="appearance">
+
+                    <div class="section-heading">
+                        <h2>Appearance</h2>
+                        <p>Customize the visual appearance of the platform.</p>
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>Theme</label>
+
+                            <select id="theme">
+
+                                <option value="dark">
+                                    Dark Neon
+                                </option>
+
+                                <option value="midnight">
+                                    Midnight
+                                </option>
+
+                                <option value="glass">
+                                    Glass Dark
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>Accent Color</label>
+
+                            <select id="accentColor">
+
+                                <option value="cyan">
+                                    Neon Cyan
+                                </option>
+
+                                <option value="blue">
+                                    Electric Blue
+                                </option>
+
+                                <option value="purple">
+                                    Neon Purple
+                                </option>
+
+                                <option value="green">
+                                    Neon Green
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Glassmorphism Effects</h3>
+
+                            <p>
+                                Enable glass-style backgrounds and blur effects.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="glassEffect"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Neon Glow Effects</h3>
+
+                            <p>
+                                Display neon glow effects around important interface elements.
+                            </p>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="neonEffect"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="button-row">
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="saveAppearance()"
+                        >
+                            <i class="fa-solid fa-palette"></i>
+                            Save Appearance
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     DATA
+                ========================= -->
+
+                <section class="settings-section" id="data">
+
+                    <div class="section-heading">
+                        <h2>Data Management</h2>
+                        <p>Manage locally stored platform data.</p>
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Export Platform Data</h3>
+
+                            <p>
+                                Download students, courses, lessons and quizzes as a JSON file.
+                            </p>
+
+                        </div>
+
+                        <button
+                            class="btn btn-secondary"
+                            onclick="exportData()"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                            Export
+                        </button>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>Import Platform Data</h3>
+
+                            <p>
+                                Import previously exported Code With Jenish data.
+                            </p>
+
+                        </div>
+
+                        <button
+                            class="btn btn-secondary"
+                            onclick="document.getElementById('importFile').click()"
+                        >
+                            <i class="fa-solid fa-upload"></i>
+                            Import
+                        </button>
+
+                        <input
+                            type="file"
+                            id="importFile"
+                            accept=".json"
+                            style="display:none"
+                            onchange="importData(event)"
+                        >
+
+                    </div>
+
+
+                    <div class="danger-zone">
+
+                        <h3>
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Danger Zone
+                        </h3>
+
+                        <p>
+                            Resetting demo data will remove locally stored
+                            students, courses, lessons, quizzes and settings.
+                            This action cannot be undone.
+                        </p>
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="resetAllData()"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                            Reset Platform Data
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- Toast -->
+
+    <div class="toast" id="toast">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span id="toastMessage">
+            Settings saved successfully.
+        </span>
+
+    </div>
+
+
+    <script>
+
+        /* =========================================
+           ADMIN SECURITY
+        ========================================= */
+
+        if (localStorage.getItem("adminLoggedIn") !== "true") {
+            window.location.href = "admin-login.html";
+        }
+
+
+        /* =========================================
+           DEFAULT ADMIN SETTINGS
+        ========================================= */
+
+        const defaultAdmin = {
+            name: "Administrator",
+            email: "admin@codewithjenish.com",
+            phone: "",
+            role: "Super Admin"
+        };
+
+
+        /* =========================================
+           LOAD SETTINGS
+        ========================================= */
+
+        function loadSettings() {
+
+            const admin =
+                JSON.parse(localStorage.getItem("adminSettings"))
+                || defaultAdmin;
+
+            document.getElementById("adminName").value =
+                admin.name || "";
+
+            document.getElementById("adminEmail").value =
+                admin.email || "";
+
+            document.getElementById("adminPhone").value =
+                admin.phone || "";
+
+            document.getElementById("adminRole").value =
+                admin.role || "Super Admin";
+
+
+            document.getElementById("topAdminName").textContent =
+                admin.name || "Administrator";
+
+            document.getElementById("profileDisplayName").textContent =
+                admin.name || "Administrator";
+
+            document.getElementById("profileDisplayEmail").textContent =
+                admin.email || "admin@codewithjenish.com";
+
+            document.getElementById("profileAvatar").textContent =
+                getInitial(admin.name);
+
+
+            const platform =
+                JSON.parse(localStorage.getItem("platformSettings"))
+                || {};
+
+            if (platform.platformName) {
+                document.getElementById("platformName").value =
+                    platform.platformName;
+            }
+
+            if (platform.websiteUrl) {
+                document.getElementById("websiteUrl").value =
+                    platform.websiteUrl;
+            }
+
+            if (platform.language) {
+                document.getElementById("language").value =
+                    platform.language;
+            }
+
+            if (platform.currency) {
+                document.getElementById("currency").value =
+                    platform.currency;
+            }
+
+            if (platform.description) {
+                document.getElementById("platformDescription").value =
+                    platform.description;
+            }
+
+            if (typeof platform.allowRegistration !== "undefined") {
+                document.getElementById("allowRegistration").checked =
+                    platform.allowRegistration;
+            }
+
+            if (typeof platform.allowEnrollment !== "undefined") {
+                document.getElementById("allowEnrollment").checked =
+                    platform.allowEnrollment;
+            }
+
+
+            const notifications =
+                JSON.parse(localStorage.getItem("notificationSettings"))
+                || {};
+
+            setCheckbox(
+                "newStudentNotification",
+                notifications.newStudent,
+                true
+            );
+
+            setCheckbox(
+                "courseEnrollmentNotification",
+                notifications.courseEnrollment,
+                true
+            );
+
+            setCheckbox(
+                "quizNotification",
+                notifications.quiz,
+                true
+            );
+
+            setCheckbox(
+                "completionNotification",
+                notifications.completion,
+                true
+            );
+
+
+            const security =
+                JSON.parse(localStorage.getItem("securitySettings"))
+                || {};
+
+            setCheckbox(
+                "loginAlerts",
+                security.loginAlerts,
+                true
+            );
+
+            setCheckbox(
+                "sessionProtection",
+                security.sessionProtection,
+                true
+            );
+
+
+            const appearance =
+                JSON.parse(localStorage.getItem("appearanceSettings"))
+                || {};
+
+            if (appearance.theme) {
+                document.getElementById("theme").value =
+                    appearance.theme;
+            }
+
+            if (appearance.accentColor) {
+                document.getElementById("accentColor").value =
+                    appearance.accentColor;
+            }
+
+            setCheckbox(
+                "glassEffect",
+                appearance.glassEffect,
+                true
+            );
+
+            setCheckbox(
+                "neonEffect",
+                appearance.neonEffect,
+                true
+            );
+        }
+
+
+        function setCheckbox(id, value, defaultValue) {
+
+            document.getElementById(id).checked =
+                typeof value === "boolean"
+                    ? value
+                    : defaultValue;
+        }
+
+
+        function getInitial(name) {
+
+            if (!name || name.trim() === "") {
+                return "A";
+            }
+
+            return name.trim().charAt(0).toUpperCase();
+        }
+
+
+        /* =========================================
+           SETTINGS TABS
+        ========================================= */
+
+        function openTab(tabId, button) {
+
+            document.querySelectorAll(".settings-section")
+                .forEach(section => {
+                    section.classList.remove("active");
+                });
+
+            document.querySelectorAll(".settings-tab")
+                .forEach(tab => {
+                    tab.classList.remove("active");
+                });
+
+            document.getElementById(tabId)
+                .classList.add("active");
+
+            button.classList.add("active");
+        }
+
+
+        /* =========================================
+           PROFILE
+        ========================================= */
+
+        function saveProfile() {
+
+            const name =
+                document.getElementById("adminName").value.trim();
+
+            const email =
+                document.getElementById("adminEmail").value.trim();
+
+            const phone =
+                document.getElementById("adminPhone").value.trim();
+
+            const role =
+                document.getElementById("adminRole").value;
+
+
+            if (!name) {
+                showToast("Please enter admin name.", true);
+                return;
+            }
+
+            if (!email) {
+                showToast("Please enter admin email.", true);
+                return;
+            }
+
+
+            const admin = {
+                name,
+                email,
+                phone,
+                role
+            };
+
+
+            localStorage.setItem(
+                "adminSettings",
+                JSON.stringify(admin)
+            );
+
+
+            document.getElementById("topAdminName").textContent =
+                name;
+
+            document.getElementById("profileDisplayName").textContent =
+                name;
+
+            document.getElementById("profileDisplayEmail").textContent =
+                email;
+
+            document.getElementById("profileAvatar").textContent =
+                getInitial(name);
+
+
+            showToast("Admin profile saved successfully.");
+        }
+
+
+        function resetProfile() {
+
+            const admin =
+                JSON.parse(localStorage.getItem("adminSettings"))
+                || defaultAdmin;
+
+            document.getElementById("adminName").value =
+                admin.name || "";
+
+            document.getElementById("adminEmail").value =
+                admin.email || "";
+
+            document.getElementById("adminPhone").value =
+                admin.phone || "";
+
+            document.getElementById("adminRole").value =
+                admin.role || "Super Admin";
+
+            showToast("Profile values restored.");
+        }
+
+
+        /* =========================================
+           PLATFORM
+        ========================================= */
+
+        function savePlatform() {
+
+            const platform = {
+
+                platformName:
+                    document.getElementById("platformName").value.trim(),
+
+                websiteUrl:
+                    document.getElementById("websiteUrl").value.trim(),
+
+                language:
+                    document.getElementById("language").value,
+
+                currency:
+                    document.getElementById("currency").value,
+
+                description:
+                    document.getElementById("platformDescription").value.trim(),
+
+                allowRegistration:
+                    document.getElementById("allowRegistration").checked,
+
+                allowEnrollment:
+                    document.getElementById("allowEnrollment").checked
+
+            };
+
+
+            localStorage.setItem(
+                "platformSettings",
+                JSON.stringify(platform)
+            );
+
+
+            showToast("Platform settings saved.");
+        }
+
+
+        /* =========================================
+           SECURITY
+        ========================================= */
+
+        function togglePassword(id, icon) {
+
+            const input = document.getElementById(id);
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                icon.classList.remove("fa-eye");
+
+                icon.classList.add("fa-eye-slash");
+
+            } else {
+
+                input.type = "password";
+
+                icon.classList.remove("fa-eye-slash");
+
+                icon.classList.add("fa-eye");
+            }
+        }
+
+
+        function changePassword() {
+
+            const current =
+                document.getElementById("currentPassword").value;
+
+            const newPassword =
+                document.getElementById("newPassword").value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+
+            if (!current || !newPassword || !confirmPassword) {
+                showToast("Please fill all password fields.", true);
+                return;
+            }
+
+
+            /*
+                Demo admin password.
+
+                Current demo login password:
+                Admin@123
+            */
+
+            const savedPassword =
+                localStorage.getItem("adminPassword")
+                || "Admin@123";
+
+
+            if (current !== savedPassword) {
+                showToast("Current password is incorrect.", true);
+                return;
+            }
+
+
+            if (newPassword.length < 6) {
+                showToast(
+                    "New password must contain at least 6 characters.",
+                    true
+                );
+                return;
+            }
+
+
+            if (newPassword !== confirmPassword) {
+                showToast(
+                    "New password and confirmation do not match.",
+                    true
+                );
+                return;
+            }
+
+
+            localStorage.setItem(
+                "adminPassword",
+                newPassword
+            );
+
+
+            document.getElementById("currentPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("confirmPassword").value = "";
+
+
+            showToast("Admin password updated successfully.");
+        }
+
+
+        /* =========================================
+           NOTIFICATIONS
+        ========================================= */
+
+        function saveNotifications() {
+
+            const settings = {
+
+                newStudent:
+                    document.getElementById(
+                        "newStudentNotification"
+                    ).checked,
+
+                courseEnrollment:
+                    document.getElementById(
+                        "courseEnrollmentNotification"
+                    ).checked,
+
+                quiz:
+                    document.getElementById(
+                        "quizNotification"
+                    ).checked,
+
+                completion:
+                    document.getElementById(
+                        "completionNotification"
+                    ).checked
+
+            };
+
+
+            localStorage.setItem(
+                "notificationSettings",
+                JSON.stringify(settings)
+            );
+
+
+            showToast("Notification settings saved.");
+        }
+
+
+        /* =========================================
+           APPEARANCE
+        ========================================= */
+
+        function saveAppearance() {
+
+            const settings = {
+
+                theme:
+                    document.getElementById("theme").value,
+
+                accentColor:
+                    document.getElementById("accentColor").value,
+
+                glassEffect:
+                    document.getElementById("glassEffect").checked,
+
+                neonEffect:
+                    document.getElementById("neonEffect").checked
+
+            };
+
+
+            localStorage.setItem(
+                "appearanceSettings",
+                JSON.stringify(settings)
+            );
+
+
+            showToast(
+                "Appearance settings saved."
+            );
+        }
+
+
+        /* =========================================
+           EXPORT DATA
+        ========================================= */
+
+        function exportData() {
+
+            const data = {
+
+                exportedAt:
+                    new Date().toISOString(),
+
+                platform:
+                    JSON.parse(
+                        localStorage.getItem("platformSettings")
+                    ) || {},
+
+                admin:
+                    JSON.parse(
+                        localStorage.getItem("adminSettings")
+                    ) || {},
+
+                students:
+                    JSON.parse(
+                        localStorage.getItem("students")
+                    ) || [],
+
+                courses:
+                    JSON.parse(
+                        localStorage.getItem("courses")
+                    ) || [],
+
+                lessons:
+                    JSON.parse(
+                        localStorage.getItem("lessons")
+                    ) || [],
+
+                quizzes:
+                    JSON.parse(
+                        localStorage.getItem("quizzes")
+                    ) || [],
+
+                certificates:
+                    JSON.parse(
+                        localStorage.getItem("certificates")
+                    ) || []
+
+            };
+
+
+            const blob = new Blob(
+                [
+                    JSON.stringify(data, null, 2)
+                ],
+                {
+                    type: "application/json"
+                }
+            );
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.download =
+                "code-with-jenish-data.json";
+
+            link.click();
+
+            URL.revokeObjectURL(url);
+
+
+            showToast("Platform data exported successfully.");
+        }
+
+
+        /* =========================================
+           IMPORT DATA
+        ========================================= */
+
+        function importData(event) {
+
+            const file =
+                event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload = function(e) {
+
+                try {
+
+                    const data =
+                        JSON.parse(e.target.result);
+
+
+                    const allowedKeys = [
+                        "platform",
+                        "admin",
+                        "students",
+                        "courses",
+                        "lessons",
+                        "quizzes",
+                        "certificates"
+                    ];
+
+
+                    if (data.platform) {
+
+                        localStorage.setItem(
+                            "platformSettings",
+                            JSON.stringify(data.platform)
+                        );
+
+                    }
+
+
+                    if (data.admin) {
+
+                        localStorage.setItem(
+                            "adminSettings",
+                            JSON.stringify(data.admin)
+                        );
+
+                    }
+
+
+                    allowedKeys
+                        .filter(key =>
+                            [
+                                "students",
+                                "courses",
+                                "lessons",
+                                "quizzes",
+                                "certificates"
+                            ].includes(key)
+                        )
+                        .forEach(key => {
+
+                            if (Array.isArray(data[key])) {
+
+                                localStorage.setItem(
+                                    key,
+                                    JSON.stringify(data[key])
+                                );
+
+                            }
+
+                        });
+
+
+                    loadSettings();
+
+                    showToast(
+                        "Platform data imported successfully."
+                    );
+
+                } catch (error) {
+
+                    showToast(
+                        "Invalid JSON file.",
+                        true
+                    );
+
+                }
+
+            };
+
+
+            reader.readAsText(file);
+        }
+
+
+        /* =========================================
+           RESET DATA
+        ========================================= */
+
+        function resetAllData() {
+
+            const confirmReset =
+                confirm(
+                    "Are you sure you want to reset platform data? This cannot be undone."
+                );
+
+
+            if (!confirmReset) {
+                return;
+            }
+
+
+            const keysToRemove = [
+
+                "students",
+                "courses",
+                "lessons",
+                "quizzes",
+                "certificates",
+                "platformSettings",
+                "adminSettings",
+                "notificationSettings",
+                "securitySettings",
+                "appearanceSettings"
+
+            ];
+
+
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+
+
+            loadSettings();
+
+
+            showToast(
+                "Platform data has been reset."
+            );
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        function toggleSidebar() {
+
+            document
+                .getElementById("sidebar")
+                .classList.toggle("show");
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        function logout() {
+
+            const confirmLogout =
+                confirm("Are you sure you want to logout?");
+
+            if (!confirmLogout) {
+                return;
+            }
+
+
+            localStorage.removeItem("adminLoggedIn");
+
+            window.location.href =
+                "admin-login.html";
+        }
+
+
+        /* =========================================
+           TOAST
+        ========================================= */
+
+        let toastTimer;
+
+
+        function showToast(message, error = false) {
+
+            const toast =
+                document.getElementById("toast");
+
+            const toastMessage =
+                document.getElementById("toastMessage");
+
+            const icon =
+                toast.querySelector("i");
+
+
+            clearTimeout(toastTimer);
+
+
+            toastMessage.textContent =
+                message;
+
+
+            toast.classList.remove("error");
+
+
+            if (error) {
+
+                toast.classList.add("error");
+
+                icon.className =
+                    "fa-solid fa-circle-exclamation";
+
+            } else {
+
+                icon.className =
+                    "fa-solid fa-circle-check";
+
+            }
+
+
+            toast.classList.add("show");
+
+
+            toastTimer =
+                setTimeout(() => {
+
+                    toast.classList.remove("show");
+
+                }, 3000);
+        }
+
+
+        /* =========================================
+           INITIALIZE
+        ========================================= */
+
+        loadSettings();
+
+    </script>
+
+</body>
+</html>

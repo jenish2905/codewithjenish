@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Management | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: white;
+      padding: 25px;
+    }
+    .container { max-width: 1100px; margin: auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+    h1, h2 { color: #00ffff; }
+    a { color: #00ffff; text-decoration: none; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(0,255,255,.2);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .stats .card h2 { font-size: 28px; margin-top: 10px; }
+    input, select {
+      padding: 11px;
+      border-radius: 8px;
+      border: 1px solid #28505d;
+      background: #10182c;
+      color: white;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+    .review {
+      border-bottom: 1px solid #25404b;
+      padding: 18px 0;
+    }
+    .review:last-child { border-bottom: none; }
+    .stars { color: #ffd45e; margin: 8px 0; }
+    .muted { color: #a9b5c7; margin-top: 7px; overflow-wrap: anywhere; }
+    .status { color: #ffdb70; margin-top: 8px; }
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 9px 13px;
+      margin: 12px 8px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .publish { background: #00ffff; color: #050816; }
+    .hide { background: #ffdb70; color: #050816; }
+    .delete { background: #ff5e75; color: white; }
+    @media(max-width: 650px) {
+      body { padding: 14px; }
+      .filters { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Feedback Management</h1>
+      <a href="admin-dashboard.html">← Admin Dashboard</a>
+    </header>
+
+    <section class="stats">
+      <div class="card">
+        <p>Total Reviews</p>
+        <h2 id="total">0</h2>
+      </div>
+      <div class="card">
+        <p>Pending</p>
+        <h2 id="pending">0</h2>
+      </div>
+      <div class="card">
+        <p>Published</p>
+        <h2 id="published">0</h2>
+      </div>
+      <div class="card">
+        <p>Average Rating</p>
+        <h2 id="average">0.0</h2>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Student Reviews</h2>
+      <div class="filters">
+        <input type="search" id="search" placeholder="Search by student or course">
+        <select id="statusFilter">
+          <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="published">Published</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+      <div id="feedbackList"></div>
+    </section>
+  </div>
+
+  <script>
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      location.href = "admin-login.html";
+    }
+
+    const list = document.getElementById("feedbackList");
+
+    function getFeedback() {
+      try {
+        const data = JSON.parse(localStorage.getItem("courseFeedback") || "[]");
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFeedback(data) {
+      localStorage.setItem("courseFeedback", JSON.stringify(data));
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    function updateStats(data) {
+      document.getElementById("total").textContent = data.length;
+      document.getElementById("pending").textContent =
+        data.filter(f => (f.status || "pending") === "pending").length;
+      document.getElementById("published").textContent =
+        data.filter(f => f.status === "published").length;
+
+      const average = data.length
+        ? data.reduce((sum, f) => sum + (Number(f.rating) || 0), 0) / data.length
+        : 0;
+
+      document.getElementById("average").textContent = average.toFixed(1);
+    }
+
+    function render() {
+      const data = getFeedback();
+      updateStats(data);
+
+      const search = document.getElementById("search").value.toLowerCase().trim();
+      const filter = document.getElementById("statusFilter").value;
+
+      const filtered = data.filter(f => {
+        const status = f.status || "pending";
+        const text = `${f.userName || ""} ${f.userEmail || ""} ${f.courseName || ""}`.toLowerCase();
+        return text.includes(search) && (filter === "all" || status === filter);
+      });
+
+      list.replaceChildren();
+
+      if (!filtered.length) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = "No feedback found.";
+        list.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach(f => {
+        const item = document.createElement("article");
+        item.className = "review";
+
+        const status = f.status || "pending";
+        item.innerHTML = `
+          <h3>${escapeHTML(f.courseName || "Course")}</h3>
+          <p class="muted">Student: ${escapeHTML(f.userName || "Student")} (${escapeHTML(f.userEmail || "")})</p>
+          <div class="stars">${"★".repeat(Math.max(0, Math.min(5, Number(f.rating) || 0)))}${"☆".repeat(5 - Math.max(0, Math.min(5, Number(f.rating) || 0)))}</div>
+          <p>${escapeHTML(f.comment)}</p>
+          <p class="status">Status: ${escapeHTML(status)}</p>
+          <p class="muted">Submitted: ${escapeHTML(f.createdAt ? new Date(f.createdAt).toLocaleString() : "Unknown")}</p>
+        `;
+
+        const publishBtn = document.createElement("button");
+        publishBtn.className = "publish";
+        publishBtn.textContent = "Publish";
+        publishBtn.disabled = status === "published";
+        publishBtn.addEventListener("click", () => updateStatus(f.id, "published"));
+
+        const hideBtn = document.createElement("button");
+        hideBtn.className = "hide";
+        hideBtn.textContent = "Hide";
+        hideBtn.disabled = status === "hidden";
+        hideBtn.addEventListener("click", () => updateStatus(f.id, "hidden"));
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete";
+        deleteBtn.textContent = "Delete";
+        deleteBtn.addEventListener("click", () => {
+          if (confirm("Delete this feedback permanently?")) {
+            saveFeedback(getFeedback().filter(item => item.id !== f.id));
+            render();
+          }
+        });
+
+        item.append(publishBtn, hideBtn, deleteBtn);
+        list.appendChild(item);
+      });
+    }
+
+    function updateStatus(id, status) {
+      const data = getFeedback();
+      const feedback = data.find(f => f.id === id);
+      if (!feedback) return;
+
+      feedback.status = status;
+      feedback.updatedAt = new Date().toISOString();
+      saveFeedback(data);
+      render();
+    }
+
+    document.getElementById("search").addEventListener("input", render);
+    document.getElementById("statusFilter").addEventListener("change", render);
+
+    render();
+  </script>
+</body>
+</html>
+

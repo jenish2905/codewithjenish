@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Quizzes | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: white;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1, h2 { color: #00ffff; }
+    main { width: 90%; max-width: 1100px; margin: 30px auto; }
+    .panel {
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 25px;
+    }
+    input, select, textarea {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 15px;
+      background: #080d1d;
+      color: white;
+      border: 1px solid #00ffff55;
+      border-radius: 8px;
+    }
+    button, .link {
+      padding: 10px 15px;
+      border: 0;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin: 4px;
+    }
+    button.secondary { background: #26334e; color: white; }
+    button.danger { background: #ff4d6d; color: white; }
+    .question {
+      border: 1px solid #ffffff22;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      background: #080d1d;
+    }
+    .quiz-card {
+      padding: 16px;
+      margin: 12px 0;
+      background: #080d1d;
+      border: 1px solid #ffffff22;
+      border-radius: 10px;
+    }
+    .muted { color: #aab5cb; }
+    label { display: block; }
+    .check { display: inline; width: auto; }
+    @media(max-width:600px) {
+      main { width: 94%; }
+      .panel { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish — Quiz Manager</h2>
+    <a class="link" href="admin-dashboard.html">Dashboard</a>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2 id="formTitle">Create Quiz</h2>
+      <form id="quizForm">
+        <label for="course">Course</label>
+        <select id="course" required></select>
+
+        <label for="quizTitle">Quiz Title</label>
+        <input id="quizTitle" required placeholder="e.g. C Basics Quiz">
+
+        <label for="description">Description</label>
+        <textarea id="description" rows="2"></textarea>
+
+        <label for="passingScore">Passing Score (%)</label>
+        <input id="passingScore" type="number" min="0" max="100"
+          value="50" required>
+
+        <h3>Questions</h3>
+        <div id="questionContainer"></div>
+        <button type="button" id="addQuestion" class="secondary">
+          + Add Question
+        </button>
+        <br><br>
+
+        <label>
+          <input id="published" class="check" type="checkbox">
+          Publish quiz
+        </label>
+        <br><br>
+
+        <button type="submit" id="saveBtn">Save Quiz</button>
+        <button type="button" id="cancelBtn" class="secondary"
+          style="display:none">Cancel Edit</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Manage Quizzes</h2>
+      <div id="quizList"></div>
+    </section>
+  </main>
+
+  <script>
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      location.href = "admin-login.html";
+    }
+
+    const read = key => JSON.parse(localStorage.getItem(key) || "[]");
+    const write = (key, value) =>
+      localStorage.setItem(key, JSON.stringify(value));
+
+    let courses = read("courses");
+    let quizzes = read("quizzes");
+    let editingId = null;
+
+    const courseSelect = document.getElementById("course");
+    const container = document.getElementById("questionContainer");
+    const form = document.getElementById("quizForm");
+
+    function loadCourses() {
+      courses = read("courses");
+      courseSelect.innerHTML = "";
+
+      courses.forEach(course => {
+        courseSelect.add(new Option(course.name, course.id));
+      });
+    }
+
+    function addQuestion(data = {}) {
+      const block = document.createElement("div");
+      block.className = "question";
+
+      const question = document.createElement("textarea");
+      question.placeholder = "Enter question";
+      question.required = true;
+      question.value = data.question || "";
+
+      const options = [];
+      for (let i = 0; i < 4; i++) {
+        const input = document.createElement("input");
+        input.placeholder = `Option ${i + 1}`;
+        input.required = true;
+        input.value = data.options?.[i] || "";
+        options.push(input);
+      }
+
+      const correctLabel = document.createElement("label");
+      correctLabel.textContent = "Correct answer";
+
+      const correct = document.createElement("select");
+      for (let i = 0; i < 4; i++) {
+        correct.add(new Option(`Option ${i + 1}`, i));
+      }
+      correct.value = data.correctAnswer ?? 0;
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Remove Question";
+      remove.className = "danger";
+      remove.onclick = () => block.remove();
+
+      block.append(question, ...options, correctLabel, correct, remove);
+      container.appendChild(block);
+    }
+
+    function collectQuestions() {
+      return [...container.querySelectorAll(".question")].map(block => {
+        const fields = block.querySelectorAll("textarea, input, select");
+        return {
+          question: fields[0].value.trim(),
+          options: [fields[1].value.trim(), fields[2].value.trim(),
+                    fields[3].value.trim(), fields[4].value.trim()],
+          correctAnswer: Number(fields[5].value)
+        };
+      });
+    }
+
+    function resetForm() {
+      form.reset();
+      container.innerHTML = "";
+      addQuestion();
+      editingId = null;
+      document.getElementById("formTitle").textContent = "Create Quiz";
+      document.getElementById("saveBtn").textContent = "Save Quiz";
+      document.getElementById("cancelBtn").style.display = "none";
+      document.getElementById("passingScore").value = 50;
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const questionData = collectQuestions();
+      if (!courseSelect.value) {
+        alert("Please create a course first.");
+        return;
+      }
+      if (!questionData.length ||
+          questionData.some(q => !q.question ||
+            q.options.some(option => !option))) {
+        alert("Please complete every question and option.");
+        return;
+      }
+
+      const old = quizzes.find(q =>
+        String(q.id) === String(editingId));
+
+      const quiz = {
+        id: editingId || Date.now().toString(),
+        courseId: courseSelect.value,
+        courseName: courses.find(c =>
+          String(c.id) === String(courseSelect.value))?.name || "",
+        quizTitle: document.getElementById("quizTitle").value.trim(),
+        title: document.getElementById("quizTitle").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        passingScore: Number(
+          document.getElementById("passingScore").value
+        ),
+        questionData,
+        published: document.getElementById("published").checked,
+        status: document.getElementById("published").checked
+          ? "published" : "draft",
+        attempts: old?.attempts || 0,
+        averageScore: old?.averageScore || 0,
+        createdAt: old?.createdAt || new Date().toISOString()
+      };
+
+      if (editingId) {
+        quizzes = quizzes.map(q =>
+          String(q.id) === String(editingId) ? quiz : q);
+      } else {
+        quizzes.push(quiz);
+      }
+
+      write("quizzes", quizzes);
+      resetForm();
+      renderQuizzes();
+      alert("Quiz saved successfully!");
+    });
+
+    function renderQuizzes() {
+      quizzes = read("quizzes");
+      const list = document.getElementById("quizList");
+      list.innerHTML = "";
+
+      if (!quizzes.length) {
+        list.textContent = "No quizzes created yet.";
+        return;
+      }
+
+      quizzes.forEach(quiz => {
+        const card = document.createElement("div");
+        card.className = "quiz-card";
+
+        const heading = document.createElement("h3");
+        heading.textContent = quiz.quizTitle || quiz.title || "Untitled";
+
+        const info = document.createElement("p");
+        info.className = "muted";
+        info.textContent =
+          `${quiz.courseName || "Course"} • ` +
+          `${quiz.questionData?.length || 0} questions • ` +
+          `${quiz.published ? "Published" : "Draft"}`;
+
+        const edit = document.createElement("button");
+        edit.textContent = "Edit";
+        edit.onclick = () => editQuiz(quiz.id);
+
+        const toggle = document.createElement("button");
+        toggle.className = "secondary";
+        toggle.textContent = quiz.published ? "Unpublish" : "Publish";
+        toggle.onclick = () => toggleQuiz(quiz.id);
+
+        const remove = document.createElement("button");
+        remove.className = "danger";
+        remove.textContent = "Delete";
+        remove.onclick = () => deleteQuiz(quiz.id);
+
+        card.append(heading, info, edit, toggle, remove);
+        list.appendChild(card);
+      });
+    }
+
+    function editQuiz(id) {
+      const quiz = quizzes.find(q => String(q.id) === String(id));
+      if (!quiz) return;
+
+      editingId = quiz.id;
+      courseSelect.value = quiz.courseId;
+      document.getElementById("quizTitle").value =
+        quiz.quizTitle || quiz.title || "";
+      document.getElementById("description").value =
+        quiz.description || "";
+      document.getElementById("passingScore").value =
+        quiz.passingScore ?? 50;
+      document.getElementById("published").checked =
+        Boolean(quiz.published);
+
+      container.innerHTML = "";
+      (quiz.questionData || []).forEach(q => addQuestion(q));
+      if (!quiz.questionData?.length) addQuestion();
+
+      document.getElementById("formTitle").textContent = "Edit Quiz";
+      document.getElementById("saveBtn").textContent = "Update Quiz";
+      document.getElementById("cancelBtn").style.display = "inline-block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleQuiz(id) {
+      quizzes = read("quizzes").map(q => {
+        if (String(q.id) !== String(id)) return q;
+        const published = !q.published;
+        return {
+          ...q,
+          published,
+          status: published ? "published" : "draft"
+        };
+      });
+      write("quizzes", quizzes);
+      renderQuizzes();
+    }
+
+    function deleteQuiz(id) {
+      if (!confirm("Delete this quiz? Existing results will remain.")) {
+        return;
+      }
+      quizzes = read("quizzes").filter(q =>
+        String(q.id) !== String(id));
+      write("quizzes", quizzes);
+      renderQuizzes();
+    }
+
+    document.getElementById("addQuestion")
+      .addEventListener("click", () => addQuestion());
+
+    document.getElementById("cancelBtn")
+      .addEventListener("click", resetForm);
+
+    loadCourses();
+    resetForm();
+    renderQuizzes();
+  </script>
+</body>
+</html>
+

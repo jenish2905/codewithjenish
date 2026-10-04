@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Support | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: white;
+    }
+    header {
+      padding: 20px 5%;
+      background: #0b1024;
+      border-bottom: 1px solid #00ffff55;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    main { width: 92%; max-width: 1100px; margin: 35px auto; }
+    h1, h2 { color: #00ffff; }
+    .panel, .ticket {
+      background: #10182c;
+      border: 1px solid #00ffff44;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .ticket { background: #080d1d; }
+    input, textarea, select {
+      width: 100%;
+      padding: 11px;
+      margin: 8px 0 14px;
+      background: #050816;
+      color: white;
+      border: 1px solid #00ffff55;
+      border-radius: 8px;
+    }
+    button, a {
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+      margin: 4px;
+    }
+    button.secondary { background: #26334e; color: white; }
+    .muted { color: #aab5cb; }
+    .status { color: #00ffff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Code With Jenish — Support Admin</h2>
+    <a href="admin-dashboard.html">Admin Dashboard</a>
+  </header>
+
+  <main>
+    <h1>Student Support Requests</h1>
+
+    <section class="panel">
+      <label for="filter">Filter requests</label>
+      <select id="filter">
+        <option value="all">All requests</option>
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+      <p id="ticketCount" class="muted"></p>
+    </section>
+
+    <div id="ticketList"></div>
+  </main>
+
+  <script>
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      location.href = "admin-login.html";
+    }
+
+    const readTickets = () =>
+      JSON.parse(localStorage.getItem("supportTickets") || "[]");
+
+    const saveTickets = tickets =>
+      localStorage.setItem("supportTickets", JSON.stringify(tickets));
+
+    const list = document.getElementById("ticketList");
+    const filter = document.getElementById("filter");
+
+    function renderTickets() {
+      const tickets = readTickets();
+      const selected = filter.value;
+
+      const visible = tickets.filter(ticket =>
+        selected === "all" || ticket.status === selected
+      );
+
+      list.innerHTML = "";
+      document.getElementById("ticketCount").textContent =
+        `${visible.length} request(s)`;
+
+      if (!visible.length) {
+        list.textContent = "No requests found.";
+        return;
+      }
+
+      visible.forEach(ticket => {
+        const card = document.createElement("section");
+        card.className = "ticket";
+
+        const title = document.createElement("h2");
+        title.textContent = ticket.subject;
+
+        const student = document.createElement("p");
+        student.textContent =
+          `${ticket.userName} (${ticket.userEmail})`;
+
+        const category = document.createElement("p");
+        category.className = "muted";
+        category.textContent = "Category: " + ticket.category;
+
+        const message = document.createElement("p");
+        message.textContent = ticket.message;
+
+        const date = document.createElement("p");
+        date.className = "muted";
+        date.textContent =
+          "Submitted: " + new Date(ticket.createdAt).toLocaleString();
+
+        const statusLabel = document.createElement("label");
+        statusLabel.textContent = "Request status";
+
+        const status = document.createElement("select");
+        ["Open", "In Progress", "Resolved"].forEach(value => {
+          status.add(new Option(value, value));
+        });
+        status.value = ticket.status;
+
+        const replyLabel = document.createElement("label");
+        replyLabel.textContent = "Reply to student";
+
+        const reply = document.createElement("textarea");
+        reply.rows = 3;
+        reply.maxLength = 2000;
+        reply.value = ticket.adminReply || "";
+        reply.placeholder = "Write your response...";
+
+        const save = document.createElement("button");
+        save.textContent = "Save Response";
+
+        save.onclick = () => {
+          const updated = readTickets();
+          const index = updated.findIndex(item =>
+            String(item.id) === String(ticket.id)
+          );
+
+          if (index === -1) return;
+
+          updated[index].status = status.value;
+          updated[index].adminReply = reply.value.trim();
+          updated[index].updatedAt = new Date().toISOString();
+
+          saveTickets(updated);
+          renderTickets();
+          alert("Request updated successfully.");
+        };
+
+        card.append(
+          title, student, category, message, date,
+          statusLabel, status, replyLabel, reply, save
+        );
+
+        list.appendChild(card);
+      });
+    }
+
+    filter.addEventListener("change", renderTickets);
+    renderTickets();
+  </script>
+</body>
+</html>
+
