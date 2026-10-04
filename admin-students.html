@@ -1,703 +1,644 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Students | Code With Jenish</title>
 
-    <title>Students | Code With Jenish Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: #fff;
+      min-height: 100vh;
+    }
 
-        body {
-            background: #050816;
-            color: #fff;
-            min-height: 100vh;
-        }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        /* ===== SIDEBAR ===== */
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background: #0b1020;
+      border-right: 1px solid #173b4a;
+      padding: 25px 15px;
+    }
 
-        .sidebar {
-            position: fixed;
-            width: 250px;
-            height: 100vh;
-            background: #080d20;
-            border-right: 1px solid rgba(0,255,255,0.15);
-            padding: 25px 15px;
-        }
+    .brand {
+      color: #00ffff;
+      font-size: 21px;
+      font-weight: bold;
+      margin: 0 10px 30px;
+    }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+    .nav a {
+      display: block;
+      padding: 13px 14px;
+      margin: 5px 0;
+      color: #b9c7d8;
+      text-decoration: none;
+      border-radius: 9px;
+    }
 
-        .logo h2 {
-            color: #00ffff;
-        }
+    .nav a:hover,
+    .nav a.active {
+      color: #00ffff;
+      background: rgba(0, 255, 255, .09);
+    }
 
-        .logo span {
-            color: #aaa;
-            font-size: 12px;
-        }
+    /* Main */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 30px;
+    }
 
-        .menu a {
-            display: block;
-            text-decoration: none;
-            color: #aaa;
-            padding: 14px;
-            margin: 7px 0;
-            border-radius: 10px;
-            transition: 0.3s;
-        }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
 
-        .menu a:hover,
-        .menu a.active {
-            background: rgba(0,255,255,0.1);
-            color: #00ffff;
-            box-shadow: 0 0 15px rgba(0,255,255,0.08);
-        }
+    h1, h2 {
+      color: #00ffff;
+    }
 
-        /* ===== MAIN ===== */
+    h1 {
+      font-size: 27px;
+    }
 
-        .main {
-            margin-left: 250px;
-            padding: 30px;
-        }
+    .muted {
+      color: #a9b5c7;
+      margin-top: 8px;
+    }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+    button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-        .topbar h1 {
-            font-size: 30px;
-        }
+    .logout {
+      background: #00ffff;
+      color: #050816;
+    }
 
-        .topbar p {
-            color: #888;
-            margin-top: 5px;
-        }
+    /* Statistics */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 18px;
+      margin-bottom: 25px;
+    }
 
-        .admin {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 10px 15px;
-            border-radius: 10px;
-            color: #00ffff;
-        }
+    .card {
+      background: rgba(255, 255, 255, .045);
+      border: 1px solid rgba(0, 255, 255, .2);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, .04);
+    }
 
-        /* ===== SEARCH ===== */
+    .stats .card p {
+      color: #a9b5c7;
+    }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
+    .stats .card h2 {
+      font-size: 30px;
+      margin-top: 12px;
+    }
 
-        .search {
-            flex: 1;
-            min-width: 250px;
-        }
+    /* Student management */
+    .management {
+      background: rgba(255, 255, 255, .045);
+      border: 1px solid rgba(0, 255, 255, .2);
+      border-radius: 14px;
+      padding: 22px;
+    }
 
-        input,
-        select {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(0,255,255,0.2);
-            background: #080d20;
-            color: white;
-            outline: none;
-        }
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+      margin: 20px 0;
+    }
 
-        input:focus,
-        select:focus {
-            border-color: #00ffff;
-        }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      background: #10182c;
+      color: #fff;
+      border: 1px solid #28505d;
+      border-radius: 8px;
+      outline: none;
+    }
 
-        .filter {
-            width: 180px;
-        }
+    input:focus, select:focus {
+      border-color: #00ffff;
+    }
 
-        /* ===== TABLE ===== */
+    .table-wrapper {
+      overflow-x: auto;
+    }
 
-        .table-container {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 15px;
-            overflow-x: auto;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 900px;
-        }
+    th, td {
+      text-align: left;
+      padding: 15px 12px;
+      border-bottom: 1px solid #25404b;
+    }
 
-        th,
-        td {
-            padding: 17px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-        }
+    th {
+      color: #00ffff;
+      background: #10182c;
+    }
 
-        th {
-            color: #00ffff;
-            font-size: 13px;
-        }
+    td {
+      color: #d7e0ed;
+    }
 
-        td {
-            color: #ddd;
-            font-size: 14px;
-        }
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: #183e35;
+      color: #8dffbd;
+    }
 
-        tr:hover {
-            background: rgba(0,255,255,0.03);
-        }
+    .badge.inactive {
+      background: #3a3030;
+      color: #ffbd9d;
+    }
 
-        .student {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .view-btn {
+      background: #00ffff;
+      color: #050816;
+      padding: 8px 12px;
+    }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg,#00ffff,#0066ff);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #000;
-            font-weight: bold;
-        }
+    .details {
+      margin-top: 12px;
+      padding: 15px;
+      background: #10182c;
+      border: 1px solid #28505d;
+      border-radius: 10px;
+    }
 
-        /* ===== PROGRESS ===== */
+    .details h3 {
+      color: #00ffff;
+      margin-bottom: 12px;
+    }
 
-        .progress-box {
-            width: 120px;
-        }
+    .course-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #25404b;
+    }
 
-        .progress-bar {
-            height: 7px;
-            background: #202638;
-            border-radius: 20px;
-            overflow: hidden;
-        }
+    .course-item:last-child {
+      border-bottom: none;
+    }
 
-        .progress-fill {
-            height: 100%;
-            background: #00ffff;
-            border-radius: 20px;
-        }
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #273348;
+      border-radius: 20px;
+      margin-top: 9px;
+      overflow: hidden;
+    }
 
-        .progress-text {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 5px;
-        }
+    .progress-bar {
+      height: 100%;
+      background: #00ffff;
+    }
 
-        /* ===== STATUS ===== */
+    .empty {
+      padding: 25px;
+      text-align: center;
+      color: #a9b5c7;
+    }
 
-        .status {
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-        }
+    @media (max-width: 800px) {
+      .layout {
+        display: block;
+      }
 
-        .active-status {
-            background: rgba(0,255,100,0.1);
-            color: #00ff88;
-        }
+      .sidebar {
+        width: 100%;
+        padding: 15px;
+      }
 
-        .inactive-status {
-            background: rgba(255,80,80,0.1);
-            color: #ff7070;
-        }
+      .brand {
+        margin-bottom: 12px;
+      }
 
-        /* ===== BUTTON ===== */
+      .nav {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+      }
 
-        .view-btn {
-            border: 1px solid #00ffff;
-            background: transparent;
-            color: #00ffff;
-            padding: 8px 13px;
-            border-radius: 7px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+      .nav a {
+        white-space: nowrap;
+      }
 
-        .view-btn:hover {
-            background: #00ffff;
-            color: #000;
-            box-shadow: 0 0 15px rgba(0,255,255,0.3);
-        }
+      .main {
+        padding: 20px 15px;
+      }
+    }
 
-        /* ===== EMPTY ===== */
-
-        .empty {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-            display: none;
-        }
-
-        /* ===== MOBILE ===== */
-
-        @media(max-width: 800px) {
-
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 1px solid rgba(0,255,255,0.15);
-            }
-
-            .main {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .topbar {
-                align-items: flex-start;
-                gap: 15px;
-                flex-direction: column;
-            }
-
-            .menu {
-                display: grid;
-                grid-template-columns: repeat(2,1fr);
-                gap: 5px;
-            }
-
-            .menu a {
-                margin: 0;
-            }
-        }
-    </style>
+    @media (max-width: 550px) {
+      .filters {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- ===== SIDEBAR ===== -->
+<div class="layout">
 
-<aside class="sidebar">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Code With Jenish</div>
 
-    <div class="logo">
-        <h2>Code With Jenish</h2>
-        <span>ADMIN PANEL</span>
-    </div>
+    <nav class="nav">
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-students.html" class="active">Students</a>
+      <a href="admin-courses.html">Courses</a>
+      <a href="admin-lessons.html">Lessons</a>
+      <a href="admin-quizzes.html">Quizzes</a>
+      <a href="admin-enrollments.html">Enrollments</a>
+      <a href="teacher-progress.html">Student Progress</a>
+      <a href="admin-feedback.html">Feedback</a>
+      <a href="admin-support.html">Support Tickets</a>
+      <a href="admin-settings.html">Settings</a>
+    </nav>
+  </aside>
 
-    <div class="menu">
+  <!-- Main -->
+  <main class="main">
 
-        <a href="admin-dashboard.html">
-            📊 Dashboard
-        </a>
+    <header class="topbar">
+      <div>
+        <h1>Manage Students</h1>
+        <p class="muted">View registered students and their learning progress.</p>
+      </div>
 
-        <a href="admin-students.html" class="active">
-            👨‍🎓 Students
-        </a>
+      <button class="logout" id="logout">Log Out</button>
+    </header>
 
-        <a href="admin-courses.html">
-            📚 Courses
-        </a>
+    <!-- Statistics -->
+    <section class="stats">
 
-        <a href="admin-lessons.html">
-            📝 Lessons
-        </a>
+      <div class="card">
+        <p>Total Students</p>
+        <h2 id="totalStudents">0</h2>
+      </div>
 
-        <a href="admin-quizzes.html">
-            🧠 Quizzes
-        </a>
+      <div class="card">
+        <p>Enrolled Students</p>
+        <h2 id="enrolledStudents">0</h2>
+      </div>
 
-        <a href="admin-certificates.html">
-            🏆 Certificates
-        </a>
+      <div class="card">
+        <p>Not Enrolled</p>
+        <h2 id="notEnrolled">0</h2>
+      </div>
 
-        <a href="admin-settings.html">
-            ⚙️ Settings
-        </a>
+      <div class="card">
+        <p>Total Enrollments</p>
+        <h2 id="totalEnrollments">0</h2>
+      </div>
 
-        <a href="#" onclick="logout()">
-            🚪 Logout
-        </a>
+    </section>
 
-    </div>
+    <!-- Student List -->
+    <section class="management">
 
-</aside>
+      <h2>Student List</h2>
 
+      <div class="filters">
+        <input
+          type="search"
+          id="search"
+          placeholder="Search by name or email..."
+        >
 
-<!-- ===== MAIN ===== -->
+        <select id="filter">
+          <option value="all">All Students</option>
+          <option value="enrolled">Enrolled</option>
+          <option value="not-enrolled">Not Enrolled</option>
+        </select>
+      </div>
 
-<main class="main">
-
-    <div class="topbar">
-
-        <div>
-            <h1>Students</h1>
-            <p>Manage and analyze student learning progress.</p>
-        </div>
-
-        <div class="admin">
-            👨‍💼 Admin
-        </div>
-
-    </div>
-
-
-    <!-- ===== SEARCH / FILTER ===== -->
-
-    <div class="controls">
-
-        <div class="search">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="🔍 Search student by name or email..."
-                onkeyup="filterStudents()"
-            >
-        </div>
-
-        <div class="filter">
-            <select id="statusFilter" onchange="filterStudents()">
-                <option value="all">All Students</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-            </select>
-        </div>
-
-    </div>
-
-
-    <!-- ===== STUDENT TABLE ===== -->
-
-    <div class="table-container">
-
+      <div class="table-wrapper">
         <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Email</th>
+              <th>Courses</th>
+              <th>Average Progress</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-            <thead>
-
-                <tr>
-                    <th>Student</th>
-                    <th>Email</th>
-                    <th>Courses</th>
-                    <th>Lessons</th>
-                    <th>Quiz Avg.</th>
-                    <th>Progress</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-
-            </thead>
-
-            <tbody id="studentTable">
-
-            </tbody>
-
+          <tbody id="studentTable"></tbody>
         </table>
+      </div>
 
-        <div class="empty" id="emptyMessage">
-            No students found.
-        </div>
+      <p id="emptyMessage" class="empty" hidden>
+        No students found.
+      </p>
 
-    </div>
+    </section>
 
-</main>
-
+  </main>
+</div>
 
 <script>
+  // Admin authentication check
+  if (localStorage.getItem("adminLoggedIn") !== "true") {
+    location.href = "admin-login.html";
+  }
 
-    /* ===== ADMIN SECURITY ===== */
+  const table = document.getElementById("studentTable");
+  const searchInput = document.getElementById("search");
+  const filterSelect = document.getElementById("filter");
 
-    if (localStorage.getItem("adminLoggedIn") !== "true") {
-        window.location.href = "admin-login.html";
+  // Read localStorage safely
+  function getData(key) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(value) ? value : [];
+    } catch {
+      return [];
     }
+  }
 
+  // Escape text before rendering HTML
+  function safe(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
 
-    /* ===== DEMO STUDENT DATA ===== */
+  // Get student records
+  function getStudents() {
+    const users = getData("users");
+    const registered = getData("registeredUsers");
+    const enrollments = getData("enrollments");
+    const requests = getData("enrollmentRequests");
 
-    let students = JSON.parse(localStorage.getItem("students")) || [
+    const students = new Map();
 
-        {
-            id: 1,
-            name: "Rahul Patel",
-            email: "rahul@gmail.com",
-            courses: 4,
-            lessons: 28,
-            quiz: 86,
-            progress: 78,
-            status: "active"
-        },
+    // Add students stored by signup
+    [...users, ...registered].forEach(user => {
+      if (!user.email) return;
 
-        {
-            id: 2,
-            name: "Priya Shah",
-            email: "priya@gmail.com",
-            courses: 3,
-            lessons: 22,
-            quiz: 92,
-            progress: 91,
-            status: "active"
-        },
+      const email = String(user.email).toLowerCase();
 
-        {
-            id: 3,
-            name: "Amit Kumar",
-            email: "amit@gmail.com",
-            courses: 2,
-            lessons: 15,
-            quiz: 74,
-            progress: 54,
-            status: "active"
-        },
+      if (!students.has(email)) {
+        students.set(email, {
+          email,
+          name: user.name || user.username || "Student"
+        });
+      }
+    });
 
-        {
-            id: 4,
-            name: "Neha Patel",
-            email: "neha@gmail.com",
-            courses: 3,
-            lessons: 19,
-            quiz: 81,
-            progress: 68,
-            status: "inactive"
-        },
+    // Also include students who have enrollment records
+    [...enrollments, ...requests].forEach(record => {
+      if (!record.userEmail) return;
 
-        {
-            id: 5,
-            name: "Jay Mehta",
-            email: "jay@gmail.com",
-            courses: 5,
-            lessons: 35,
-            quiz: 95,
-            progress: 97,
-            status: "active"
-        }
+      const email = String(record.userEmail).toLowerCase();
 
-    ];
+      if (!students.has(email)) {
+        students.set(email, {
+          email,
+          name: record.userName || "Student"
+        });
+      }
+    });
 
+    return [...students.values()].map(student => {
+      const studentEnrollments = enrollments.filter(e =>
+        String(e.userEmail || "").toLowerCase() === student.email
+      );
 
-    /* Save demo data */
+      const courses = getData("courses");
+      const lessons = getData("lessons");
 
-    if (!localStorage.getItem("students")) {
-        localStorage.setItem(
-            "students",
-            JSON.stringify(students)
+      const courseData = studentEnrollments.map(e => {
+        const course = courses.find(c =>
+          String(c.id) === String(e.courseId)
         );
-    }
 
+        const courseLessons = lessons.filter(l =>
+          String(l.courseId) === String(e.courseId) &&
+          l.published === true
+        );
 
-    /* ===== DISPLAY STUDENTS ===== */
+        const completed = Array.isArray(e.completedLessonIds)
+          ? e.completedLessonIds.length
+          : Number(e.completedLessons) || 0;
 
-    function displayStudents(data = students) {
+        const progress = courseLessons.length
+          ? Math.min(100, Math.round(completed / courseLessons.length * 100))
+          : Math.min(100, Number(e.progress) || 0);
 
-        const table = document.getElementById("studentTable");
-        const empty = document.getElementById("emptyMessage");
+        return {
+          name: e.courseName || course?.name || "Course",
+          progress
+        };
+      });
 
-        table.innerHTML = "";
+      const average = courseData.length
+        ? Math.round(
+            courseData.reduce((sum, c) => sum + c.progress, 0) /
+            courseData.length
+          )
+        : 0;
 
-        if (data.length === 0) {
+      return {
+        ...student,
+        courses: courseData,
+        average
+      };
+    });
+  }
 
-            empty.style.display = "block";
-            return;
+  // Render statistics
+  function updateStats(students) {
+    const enrolled = students.filter(s => s.courses.length > 0).length;
 
+    document.getElementById("totalStudents").textContent = students.length;
+    document.getElementById("enrolledStudents").textContent = enrolled;
+    document.getElementById("notEnrolled").textContent =
+      students.length - enrolled;
+
+    document.getElementById("totalEnrollments").textContent =
+      getData("enrollments").length;
+  }
+
+  // Display student details
+  function showDetails(email) {
+    const student = getStudents().find(s => s.email === email);
+    if (!student) return;
+
+    const details = document.getElementById("details-" + encodeURIComponent(email));
+    if (!details) return;
+
+    details.innerHTML = `
+      <h3>${safe(student.name)}</h3>
+      <p class="muted">${safe(student.email)}</p>
+      <p style="margin-top:10px">
+        <strong>Average Progress:</strong> ${student.average}%
+      </p>
+
+      <h3 style="margin-top:18px">Enrolled Courses</h3>
+
+      ${student.courses.length
+        ? student.courses.map(course => `
+          <div class="course-item">
+            <strong>${safe(course.name)}</strong>
+            <p class="muted">${course.progress}% completed</p>
+            <div class="progress-track">
+              <div class="progress-bar"
+                style="width:${course.progress}%"></div>
+            </div>
+          </div>
+        `).join("")
+        : '<p class="muted">No course enrollments found.</p>'
+      }
+    `;
+  }
+
+  // Render table
+  function renderStudents() {
+    const students = getStudents();
+    updateStats(students);
+
+    const query = searchInput.value.toLowerCase().trim();
+    const filter = filterSelect.value;
+
+    const filtered = students.filter(student => {
+      const matchesSearch =
+        student.name.toLowerCase().includes(query) ||
+        student.email.includes(query);
+
+      const enrolled = student.courses.length > 0;
+
+      const matchesFilter =
+        filter === "all" ||
+        (filter === "enrolled" && enrolled) ||
+        (filter === "not-enrolled" && !enrolled);
+
+      return matchesSearch && matchesFilter;
+    });
+
+    table.replaceChildren();
+    document.getElementById("emptyMessage").hidden = filtered.length > 0;
+
+    filtered.forEach((student, index) => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>
+          <strong>${safe(student.name)}</strong>
+        </td>
+
+        <td>${safe(student.email)}</td>
+
+        <td>${student.courses.length}</td>
+
+        <td>${student.average}%</td>
+
+        <td>
+          <button class="view-btn" type="button">
+            View Details
+          </button>
+        </td>
+      `;
+
+      const button = row.querySelector("button");
+
+      button.addEventListener("click", () => {
+        const next = row.nextElementSibling;
+
+        if (next && next.classList.contains("detail-row")) {
+          next.remove();
+          button.textContent = "View Details";
+          return;
         }
 
-        empty.style.display = "none";
-
-
-        data.forEach(student => {
-
-            const initials = student.name
-                .split(" ")
-                .map(word => word[0])
-                .join("")
-                .substring(0,2)
-                .toUpperCase();
-
-
-            const row = document.createElement("tr");
-
-            row.innerHTML = `
-
-                <td>
-
-                    <div class="student">
-
-                        <div class="avatar">
-                            ${initials}
-                        </div>
-
-                        <strong>
-                            ${student.name}
-                        </strong>
-
-                    </div>
-
-                </td>
-
-
-                <td>
-                    ${student.email}
-                </td>
-
-
-                <td>
-                    ${student.courses}
-                </td>
-
-
-                <td>
-                    ${student.lessons}
-                </td>
-
-
-                <td>
-                    ${student.quiz}%
-                </td>
-
-
-                <td>
-
-                    <div class="progress-box">
-
-                        <div class="progress-bar">
-
-                            <div
-                                class="progress-fill"
-                                style="width:${student.progress}%">
-                            </div>
-
-                        </div>
-
-                        <div class="progress-text">
-                            ${student.progress}% completed
-                        </div>
-
-                    </div>
-
-                </td>
-
-
-                <td>
-
-                    <span class="status ${
-                        student.status === "active"
-                        ? "active-status"
-                        : "inactive-status"
-                    }">
-
-                        ${
-                            student.status === "active"
-                            ? "● Active"
-                            : "● Inactive"
-                        }
-
-                    </span>
-
-                </td>
-
-
-                <td>
-
-                    <button
-                        class="view-btn"
-                        onclick="viewProgress(${student.id})">
-
-                        View Progress
-
-                    </button>
-
-                </td>
-
-            `;
-
-            table.appendChild(row);
-
+        // Close any currently expanded row
+        document.querySelectorAll(".detail-row").forEach(el => el.remove());
+        document.querySelectorAll(".view-btn").forEach(el => {
+          el.textContent = "View Details";
         });
 
-    }
+        const detailRow = document.createElement("tr");
+        detailRow.className = "detail-row";
 
+        const cell = document.createElement("td");
+        cell.colSpan = 5;
 
-    /* ===== SEARCH + FILTER ===== */
+        const details = document.createElement("div");
+        details.className = "details";
+        details.id = "details-" + encodeURIComponent(student.email);
 
-    function filterStudents() {
+        cell.appendChild(details);
+        detailRow.appendChild(cell);
+        row.after(detailRow);
 
-        const search =
-            document
-            .getElementById("searchInput")
-            .value
-            .toLowerCase();
+        showDetails(student.email);
+        button.textContent = "Hide Details";
+      });
 
-        const status =
-            document
-            .getElementById("statusFilter")
-            .value;
+      table.appendChild(row);
+    });
+  }
 
+  // Search and filters
+  searchInput.addEventListener("input", renderStudents);
+  filterSelect.addEventListener("change", renderStudents);
 
-        const filtered = students.filter(student => {
+  // Logout
+  document.getElementById("logout").addEventListener("click", () => {
+    localStorage.removeItem("adminLoggedIn");
+    location.href = "admin-login.html";
+  });
 
-            const matchesSearch =
-                student.name
-                .toLowerCase()
-                .includes(search)
-                ||
-                student.email
-                .toLowerCase()
-                .includes(search);
+  renderStudents();
 
-
-            const matchesStatus =
-                status === "all"
-                ||
-                student.status === status;
-
-
-            return matchesSearch && matchesStatus;
-
-        });
-
-
-        displayStudents(filtered);
-
-    }
-
-
-    /* ===== VIEW STUDENT PROGRESS ===== */
-
-    function viewProgress(id) {
-
-        window.location.href =
-            "student-progress.html?id=" + id;
-
-    }
-
-
-    /* ===== LOGOUT ===== */
-
-    function logout() {
-
-        localStorage.removeItem("adminLoggedIn");
-
-        window.location.href =
-            "admin-login.html";
-
-    }
-
-
-    /* ===== INITIAL LOAD ===== */
-
-    displayStudents();
-
+  // Refresh when localStorage changes in another tab
+  window.addEventListener("storage", renderStudents);
 </script>
 
 </body>
