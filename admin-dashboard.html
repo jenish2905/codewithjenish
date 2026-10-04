@@ -1,1042 +1,298 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Admin Dashboard | Code With Jenish</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-
-        background: #050816;
-
-        color: white;
-
-        min-height: 100vh;
-      }
-
-      :root {
-        --primary: #00e5ff;
-        --blue: #3b82f6;
-        --purple: #8b5cf6;
-        --red: #ef4444;
-        --green: #22c55e;
-        --bg: #050816;
-        --sidebar: #080c1c;
-        --card: rgba(255, 255, 255, 0.05);
-        --border: rgba(255, 255, 255, 0.1);
-        --muted: #9ca3af;
-      }
-
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      /* =========================
-           SIDEBAR
-        ========================= */
-
-      .sidebar {
-        position: fixed;
-
-        top: 0;
-        left: 0;
-
-        width: 250px;
-
-        height: 100vh;
-
-        background: var(--sidebar);
-
-        border-right: 1px solid var(--border);
-
-        padding: 25px 18px;
-
-        z-index: 1000;
-      }
-
-      .logo {
-        font-size: 21px;
-
-        font-weight: 800;
-
-        margin-bottom: 45px;
-
-        padding-left: 10px;
-      }
-
-      .logo span {
-        color: var(--primary);
-      }
-
-      .admin-badge {
-        display: inline-block;
-
-        padding: 5px 9px;
-
-        margin-left: 7px;
-
-        border-radius: 5px;
-
-        background: rgba(239, 68, 68, 0.12);
-
-        color: #f87171;
-
-        font-size: 9px;
-
-        text-transform: uppercase;
-      }
-
-      .menu-title {
-        color: #6b7280;
-
-        font-size: 10px;
-
-        text-transform: uppercase;
-
-        letter-spacing: 1.5px;
-
-        margin: 20px 10px 10px;
-      }
-
-      .menu a {
-        display: flex;
-
-        align-items: center;
-
-        gap: 13px;
-
-        padding: 13px 14px;
-
-        margin-bottom: 5px;
-
-        border-radius: 10px;
-
-        color: #9ca3af;
-
-        font-size: 13px;
-
-        transition: 0.3s;
-      }
-
-      .menu a i {
-        width: 20px;
-
-        text-align: center;
-      }
-
-      .menu a:hover,
-      .menu a.active {
-        color: white;
-
-        background: rgba(0, 229, 255, 0.08);
-      }
-
-      .menu a.active {
-        color: var(--primary);
-
-        border-left: 3px solid var(--primary);
-      }
-
-      .logout {
-        color: #f87171 !important;
-      }
-
-      /* =========================
-           MAIN
-        ========================= */
-
-      .main {
-        margin-left: 250px;
-
-        padding: 25px 35px;
-      }
-
-      /* =========================
-           TOPBAR
-        ========================= */
-
-      .topbar {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        margin-bottom: 30px;
-      }
-
-      .topbar h1 {
-        font-size: 25px;
-      }
-
-      .topbar p {
-        color: var(--muted);
-
-        font-size: 12px;
-
-        margin-top: 5px;
-      }
-
-      .admin-profile {
-        display: flex;
-
-        align-items: center;
-
-        gap: 12px;
-      }
-
-      .avatar {
-        width: 42px;
-
-        height: 42px;
-
-        border-radius: 50%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        background: linear-gradient(135deg, var(--primary), var(--purple));
-
-        color: #020617;
-
-        font-weight: 800;
-      }
-
-      .admin-name {
-        font-size: 13px;
-
-        font-weight: 600;
-      }
-
-      .admin-role {
-        font-size: 10px;
-
-        color: var(--muted);
-      }
-
-      /* =========================
-           STATS
-        ========================= */
-
-      .stats {
-        display: grid;
-
-        grid-template-columns: repeat(4, 1fr);
-
-        gap: 18px;
-
-        margin-bottom: 25px;
-      }
-
-      .stat-card {
-        padding: 22px;
-
-        border-radius: 15px;
-
-        background: var(--card);
-
-        border: 1px solid var(--border);
-      }
-
-      .stat-top {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-      }
-
-      .stat-card h2 {
-        font-size: 27px;
-
-        margin-bottom: 5px;
-      }
-
-      .stat-card p {
-        color: var(--muted);
-
-        font-size: 11px;
-      }
-
-      .stat-icon {
-        width: 43px;
-
-        height: 43px;
-
-        border-radius: 11px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        color: var(--primary);
-
-        background: rgba(0, 229, 255, 0.1);
-      }
-
-      /* =========================
-           GRID
-        ========================= */
-
-      .grid {
-        display: grid;
-
-        grid-template-columns: 2fr 1fr;
-
-        gap: 22px;
-      }
-
-      .card {
-        background: var(--card);
-
-        border: 1px solid var(--border);
-
-        border-radius: 17px;
-
-        padding: 23px;
-
-        margin-bottom: 22px;
-      }
-
-      .card-header {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        margin-bottom: 20px;
-      }
-
-      .card-header h3 {
-        font-size: 16px;
-      }
-
-      .view {
-        color: var(--primary);
-
-        font-size: 11px;
-      }
-
-      /* =========================
-           TABLE
-        ========================= */
-
-      .table-container {
-        overflow-x: auto;
-      }
-
-      table {
-        width: 100%;
-
-        border-collapse: collapse;
-
-        min-width: 600px;
-      }
-
-      th {
-        text-align: left;
-
-        color: #6b7280;
-
-        font-size: 10px;
-
-        text-transform: uppercase;
-
-        padding: 12px;
-
-        border-bottom: 1px solid var(--border);
-      }
-
-      td {
-        padding: 14px 12px;
-
-        font-size: 12px;
-
-        border-bottom: 1px solid var(--border);
-      }
-
-      tr:last-child td {
-        border-bottom: none;
-      }
-
-      .student {
-        display: flex;
-
-        align-items: center;
-
-        gap: 9px;
-      }
-
-      .student-avatar {
-        width: 32px;
-
-        height: 32px;
-
-        border-radius: 50%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        background: rgba(0, 229, 255, 0.1);
-
-        color: var(--primary);
-
-        font-weight: 700;
-
-        font-size: 11px;
-      }
-
-      .student-email {
-        color: var(--muted);
-
-        font-size: 9px;
-      }
-
-      .status {
-        padding: 5px 8px;
-
-        border-radius: 6px;
-
-        font-size: 9px;
-      }
-
-      .active-status {
-        color: #4ade80;
-
-        background: rgba(34, 197, 94, 0.1);
-      }
-
-      .progress-small {
-        width: 80px;
-
-        height: 6px;
-
-        border-radius: 20px;
-
-        overflow: hidden;
-
-        background: rgba(255, 255, 255, 0.08);
-      }
-
-      .progress-small div {
-        height: 100%;
-
-        background: linear-gradient(90deg, var(--primary), var(--blue));
-      }
-
-      /* =========================
-           QUICK ACTIONS
-        ========================= */
-
-      .actions {
-        display: grid;
-
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 12px;
-      }
-
-      .action {
-        padding: 18px;
-
-        border-radius: 12px;
-
-        background: rgba(255, 255, 255, 0.03);
-
-        border: 1px solid var(--border);
-
-        transition: 0.3s;
-      }
-
-      .action:hover {
-        border-color: rgba(0, 229, 255, 0.3);
-
-        transform: translateY(-2px);
-      }
-
-      .action i {
-        color: var(--primary);
-
-        font-size: 20px;
-
-        margin-bottom: 12px;
-      }
-
-      .action h4 {
-        font-size: 12px;
-
-        margin-bottom: 4px;
-      }
-
-      .action p {
-        color: var(--muted);
-
-        font-size: 9px;
-      }
-
-      /* =========================
-           COURSE STATS
-        ========================= */
-
-      .course-stat {
-        margin-bottom: 18px;
-      }
-
-      .course-stat:last-child {
-        margin-bottom: 0;
-      }
-
-      .course-stat-top {
-        display: flex;
-
-        justify-content: space-between;
-
-        font-size: 11px;
-
-        margin-bottom: 7px;
-      }
-
-      .course-stat-top span:last-child {
-        color: var(--primary);
-      }
-
-      .bar {
-        height: 7px;
-
-        background: rgba(255, 255, 255, 0.08);
-
-        border-radius: 20px;
-
-        overflow: hidden;
-      }
-
-      .bar div {
-        height: 100%;
-
-        background: linear-gradient(90deg, var(--primary), var(--purple));
-      }
-
-      /* =========================
-           MOBILE
-        ========================= */
-
-      .mobile-menu {
-        display: none;
-
-        background: none;
-
-        border: none;
-
-        color: white;
-
-        font-size: 22px;
-
-        cursor: pointer;
-      }
-
-      @media (max-width: 1100px) {
-        .stats {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      @media (max-width: 800px) {
-        .sidebar {
-          transform: translateX(-100%);
-
-          transition: 0.3s;
-        }
-
-        .sidebar.open {
-          transform: translateX(0);
-        }
-
-        .main {
-          margin-left: 0;
-
-          padding: 20px;
-        }
-
-        .mobile-menu {
-          display: block;
-
-          margin-bottom: 10px;
-        }
-      }
-
-      @media (max-width: 550px) {
-        .stats {
-          grid-template-columns: 1fr;
-        }
-
-        .admin-profile div:not(.avatar) {
-          display: none;
-        }
-
-        .actions {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- =========================
-     SIDEBAR
-========================= -->
-
-    <aside class="sidebar" id="sidebar">
-      <div class="logo">
-        <span>&lt;/&gt;</span>
-
-        Code With Jenish
-
-        <span class="admin-badge"> Admin </span>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Code With Jenish</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #050816;
+      color: #fff;
+      min-height: 100vh;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background: #0b1020;
+      border-right: 1px solid #173b4a;
+      padding: 25px 15px;
+    }
+    .brand {
+      color: #00ffff;
+      font-size: 22px;
+      font-weight: bold;
+      margin: 0 10px 30px;
+    }
+    .nav a {
+      display: block;
+      color: #b9c7d8;
+      text-decoration: none;
+      padding: 13px 14px;
+      border-radius: 9px;
+      margin: 5px 0;
+    }
+    .nav a:hover, .nav a.active {
+      color: #00ffff;
+      background: rgba(0,255,255,.09);
+    }
+    .main { flex: 1; min-width: 0; padding: 30px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    h1, h2 { color: #00ffff; }
+    h1 { font-size: 26px; }
+    .muted { color: #a9b5c7; }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 15px;
+      background: #00ffff;
+      color: #050816;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(0,255,255,.18);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0,255,255,.04);
+    }
+    .stats .card p { color: #a9b5c7; }
+    .stats .card h2 { font-size: 30px; margin-top: 12px; }
+    .section-title { margin: 25px 0 15px; }
+    .management {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 15px;
+    }
+    .management a {
+      display: block;
+      padding: 18px;
+      border: 1px solid #1d4553;
+      background: #10182c;
+      border-radius: 11px;
+      text-decoration: none;
+      color: #00ffff;
+      transition: .2s;
+    }
+    .management a:hover {
+      border-color: #00ffff;
+      transform: translateY(-2px);
+    }
+    .management strong { display: block; margin-bottom: 8px; }
+    .management span { color: #a9b5c7; font-size: 13px; }
+    .request {
+      padding: 14px 0;
+      border-bottom: 1px solid #25404b;
+    }
+    .request:last-child { border-bottom: none; }
+    .status { color: #ffdb70; font-size: 13px; margin-top: 5px; }
+    @media(max-width: 800px) {
+      .layout { display: block; }
+      .sidebar { width: 100%; padding: 15px; }
+      .brand { margin-bottom: 12px; }
+      .nav { display: flex; gap: 5px; overflow-x: auto; }
+      .nav a { white-space: nowrap; }
+      .main { padding: 20px 15px; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">Code With Jenish</div>
+    <nav class="nav">
+      <a class="active" href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-students.html">Students</a>
+      <a href="admin-courses.html">Courses</a>
+      <a href="admin-lessons.html">Lessons</a>
+      <a href="admin-quizzes.html">Quizzes</a>
+      <a href="admin-enrollments.html">Enrollments</a>
+      <a href="teacher-progress.html">Student Progress</a>
+      <a href="admin-feedback.html">Feedback</a>
+      <a href="admin-support.html">Support Tickets</a>
+      <a href="admin-settings.html">Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p class="muted">Manage your learning platform.</p>
       </div>
+      <button id="logout">Log Out</button>
+    </header>
 
-      <div class="menu-title">Management</div>
-
-      <nav class="menu">
-        <a href="#" class="active">
-          <i class="fa-solid fa-chart-pie"></i>
-
-          Dashboard
-        </a>
-
-        <a href="admin-students.html">
-          <i class="fa-solid fa-users"></i>
-
-          Students
-        </a>
-
-        <a href="admin-courses.html">
-          <i class="fa-solid fa-book"></i>
-
-          Courses
-        </a>
-
-        <a href="admin-lessons.html">
-          <i class="fa-solid fa-video"></i>
-
-          Lessons
-        </a>
-
-        <a href="admin-quizzes.html">
-          <i class="fa-solid fa-clipboard-question"></i>
-
-          Quizzes
-        </a>
-
-        <a href="#certificates">
-          <i class="fa-solid fa-certificate"></i>
-
-          Certificates
-        </a>
-        <a href="admin-announcements.html"> Manage Announcements</a>
-        <a href="teacher-progress.html">Teacher Progress Analysis</a>
-        <a href="admin-support.html">Manage Support Requests</a>
-        <a href="admin-enrollments.html">Manage Enrollments</a>
-        <a href="admin-feedback.html">Manage Feedback</a>
-        <div class="menu-title">System</div>
-
-        <a href="admin-settings.html">
-          <i class="fa-solid fa-gear"></i>
-
-          Settings
-        </a>
-
-        <a href="#" class="logout" id="logout">
-          <i class="fa-solid fa-right-from-bracket"></i>
-
-          Logout
-        </a>
-      </nav>
-    </aside>
-
-    <!-- =========================
-     MAIN
-========================= -->
-
-    <main class="main">
-      <!-- TOPBAR -->
-
-      <div class="topbar">
-        <div>
-          <button class="mobile-menu" id="mobileMenu">
-            <i class="fa-solid fa-bars"></i>
-          </button>
-
-          <h1>Admin Dashboard</h1>
-
-          <p>Manage your Code With Jenish platform.</p>
-        </div>
-
-        <div class="admin-profile">
-          <div>
-            <div class="admin-name">Administrator</div>
-
-            <div class="admin-role">Platform Admin</div>
-          </div>
-
-          <div class="avatar">A</div>
-        </div>
+    <section class="stats">
+      <div class="card">
+        <p>Total Students</p>
+        <h2 id="studentCount">0</h2>
       </div>
-
-      <!-- =========================
-         STATS
-    ========================= -->
-
-      <section class="stats">
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <h2 id="studentCount">0</h2>
-
-              <p>Total Students</p>
-            </div>
-
-            <div class="stat-icon">
-              <i class="fa-solid fa-users"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <h2>6</h2>
-
-              <p>Total Courses</p>
-            </div>
-
-            <div class="stat-icon">
-              <i class="fa-solid fa-book-open"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <h2>156</h2>
-
-              <p>Total Lessons</p>
-            </div>
-
-            <div class="stat-icon">
-              <i class="fa-solid fa-video"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <h2>87%</h2>
-
-              <p>Avg. Completion</p>
-            </div>
-
-            <div class="stat-icon">
-              <i class="fa-solid fa-chart-line"></i>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =========================
-         GRID
-    ========================= -->
-
-      <div class="grid">
-        <!-- LEFT -->
-
-        <div>
-          <!-- STUDENTS -->
-
-          <div class="card" id="students">
-            <div class="card-header">
-              <h3>Recent Students</h3>
-
-              <a href="#" class="view"> View All </a>
-            </div>
-
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Student</th>
-
-                    <th>Course</th>
-
-                    <th>Progress</th>
-
-                    <th>Status</th>
-                  </tr>
-                </thead>
-
-                <tbody id="studentTable">
-                  <tr>
-                    <td>
-                      <div class="student">
-                        <div class="student-avatar">JS</div>
-
-                        <div>
-                          <div>Demo Student</div>
-
-                          <div class="student-email">student@example.com</div>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td>C Programming</td>
-
-                    <td>
-                      <div class="progress-small">
-                        <div style="width: 65%"></div>
-                      </div>
-
-                      <small> 65% </small>
-                    </td>
-
-                    <td>
-                      <span class="status active-status"> Active </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- COURSE PERFORMANCE -->
-
-          <div class="card" id="courses">
-            <div class="card-header">
-              <h3>Course Performance</h3>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> C Programming </span>
-
-                <span> 78% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 78%"></div>
-              </div>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> Python </span>
-
-                <span> 64% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 64%"></div>
-              </div>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> JavaScript </span>
-
-                <span> 71% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 71%"></div>
-              </div>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> Web Development </span>
-
-                <span> 58% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 58%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT -->
-
-        <div>
-          <!-- QUICK ACTIONS -->
-
-          <div class="card">
-            <div class="card-header">
-              <h3>Quick Actions</h3>
-            </div>
-
-            <div class="actions">
-              <a href="admin-courses.html" class="action">
-                <i class="fa-solid fa-plus"></i>
-
-                <h4>Add Course</h4>
-
-                <p>Create a new course</p>
-              </a>
-
-              <a href="admin-lessons.html" class="action">
-                <i class="fa-solid fa-video"></i>
-
-                <h4>Add Lesson</h4>
-
-                <p>Create new lesson</p>
-              </a>
-
-              <a href="admin-quizzes.html" class="action">
-                <i class="fa-solid fa-question"></i>
-
-                <h4>Create Quiz</h4>
-
-                <p>Add quiz questions</p>
-              </a>
-
-              <a href="admin-students.html" class="action">
-                <i class="fa-solid fa-user-plus"></i>
-
-                <h4>Students</h4>
-
-                <p>Manage students</p>
-              </a>
-            </div>
-          </div>
-
-          <!-- SYSTEM -->
-
-          <div class="card">
-            <div class="card-header">
-              <h3>Platform Overview</h3>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> Course Completion </span>
-
-                <span> 72% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 72%"></div>
-              </div>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> Quiz Participation </span>
-
-                <span> 84% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 84%"></div>
-              </div>
-            </div>
-
-            <div class="course-stat">
-              <div class="course-stat-top">
-                <span> Certificate Completion </span>
-
-                <span> 46% </span>
-              </div>
-
-              <div class="bar">
-                <div style="width: 46%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="card">
+        <p>Total Courses</p>
+        <h2 id="courseCount">0</h2>
       </div>
-    </main>
+      <div class="card">
+        <p>Total Lessons</p>
+        <h2 id="lessonCount">0</h2>
+      </div>
+      <div class="card">
+        <p>Quiz Attempts</p>
+        <h2 id="quizCount">0</h2>
+      </div>
+      <div class="card">
+        <p>Pending Enrollments</p>
+        <h2 id="pendingCount">0</h2>
+      </div>
+      <div class="card">
+        <p>Open Support Tickets</p>
+        <h2 id="ticketCount">0</h2>
+      </div>
+    </section>
 
-    <script>
-      /* =========================
-   ADMIN AUTH PROTECTION
-========================= */
+    <h2 class="section-title">Management</h2>
+    <section class="management">
+      <a href="admin-students.html">
+        <strong>Manage Students</strong>
+        <span>View and manage student accounts</span>
+      </a>
+      <a href="admin-courses.html">
+        <strong>Manage Courses</strong>
+        <span>Create, edit, and publish courses</span>
+      </a>
+      <a href="admin-lessons.html">
+        <strong>Manage Lessons</strong>
+        <span>Add and organize course lessons</span>
+      </a>
+      <a href="admin-quizzes.html">
+        <strong>Manage Quizzes</strong>
+        <span>Create quizzes and questions</span>
+      </a>
+      <a href="admin-enrollments.html">
+        <strong>Manage Enrollments</strong>
+        <span>Approve or reject course requests</span>
+      </a>
+      <a href="teacher-progress.html">
+        <strong>Student Progress</strong>
+        <span>Review course and quiz performance</span>
+      </a>
+      <a href="admin-feedback.html">
+        <strong>Manage Feedback</strong>
+        <span>Review and publish course reviews</span>
+      </a>
+      <a href="admin-support.html">
+        <strong>Support Tickets</strong>
+        <span>Respond to student questions</span>
+      </a>
+      <a href="admin-settings.html">
+        <strong>Platform Settings</strong>
+        <span>Manage available settings</span>
+      </a>
+    </section>
 
-      const adminLoggedIn = localStorage.getItem("adminLoggedIn");
+    <h2 class="section-title">Recent Enrollment Requests</h2>
+    <section class="card" id="recentRequests">
+      <p class="muted">Loading requests...</p>
+    </section>
+  </main>
+</div>
 
-      if (adminLoggedIn !== "true") {
-        window.location.href = "admin-login.html";
-      }
+<script>
+  if (localStorage.getItem("adminLoggedIn") !== "true") {
+    location.href = "admin-login.html";
+  }
 
-      /* =========================
-   COUNT REGISTERED USERS
-========================= */
+  function getData(key) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(value) ? value : [];
+    } catch {
+      return [];
+    }
+  }
 
-      const user = localStorage.getItem("codeWithJenishUser");
+  function safe(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
+    })[ch]);
+  }
 
-      if (user) {
-        document.getElementById("studentCount").textContent = "1";
-      }
+  function renderAdminDashboard() {
+    const students = getData("enrollments");
+    const requests = getData("enrollmentRequests");
+    const courses = getData("courses");
+    const lessons = getData("lessons");
+    const quizzes = getData("quizResults");
+    const tickets = getData("supportTickets");
 
-      /* =========================
-   MOBILE SIDEBAR
-========================= */
+    // Count unique students across enrollment records and requests.
+    const emails = new Set();
+    [...students, ...requests].forEach(item => {
+      if (item.userEmail) emails.add(String(item.userEmail).toLowerCase());
+    });
 
-      const mobileMenu = document.getElementById("mobileMenu");
+    document.getElementById("studentCount").textContent = emails.size;
+    document.getElementById("courseCount").textContent = courses.length;
+    document.getElementById("lessonCount").textContent = lessons.length;
+    document.getElementById("quizCount").textContent = quizzes.length;
+    document.getElementById("pendingCount").textContent =
+      requests.filter(r => r.status === "pending").length;
+    document.getElementById("ticketCount").textContent =
+      tickets.filter(t => !["resolved", "closed"].includes(
+        String(t.status || "open").toLowerCase()
+      )).length;
 
-      const sidebar = document.getElementById("sidebar");
+    const container = document.getElementById("recentRequests");
+    const recent = [...requests]
+      .sort((a, b) => new Date(b.requestedAt || 0) - new Date(a.requestedAt || 0))
+      .slice(0, 5);
 
-      mobileMenu.addEventListener("click", () => {
-        sidebar.classList.toggle("open");
-      });
+    container.replaceChildren();
 
-      /* =========================
-   LOGOUT
-========================= */
+    if (!recent.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted";
+      empty.textContent = "No enrollment requests yet.";
+      container.appendChild(empty);
+      return;
+    }
 
-      document.getElementById("logout").addEventListener("click", function (e) {
-        e.preventDefault();
+    recent.forEach(r => {
+      const item = document.createElement("div");
+      item.className = "request";
+      item.innerHTML = `
+        <strong>${safe(r.userName || "Student")}</strong>
+        <p class="muted">${safe(r.courseName || "Course")}</p>
+        <p class="status">Status: ${safe(r.status || "pending")}</p>
+      `;
+      container.appendChild(item);
+    });
+  }
 
-        localStorage.removeItem("adminLoggedIn");
+  document.getElementById("logout").addEventListener("click", () => {
+    localStorage.removeItem("adminLoggedIn");
+    location.href = "admin-login.html";
+  });
 
-        window.location.href = "admin-login.html";
-      });
-    </script>
-  </body>
+  renderAdminDashboard();
+</script>
+</body>
 </html>
+
